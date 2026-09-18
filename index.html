@@ -261,20 +261,18 @@ img{display:block;max-width:100%}
 .sign h2{font-family:var(--serif-cn);font-weight:700;font-size:clamp(30px,5vw,58px);line-height:1.18;letter-spacing:-.012em}
 .sign h2 .hl{color:var(--accent)}
 .sign p{margin-top:var(--s4);font-size:15.5px;line-height:1.85;color:var(--ink-2);max-width:52ch}
-.mail{display:inline-block;margin-top:var(--s5);font-family:var(--display);font-size:clamp(19px,3vw,33px);letter-spacing:-.02em;border-bottom:2px solid var(--accent);padding-bottom:5px;transition:color .2s,border-color .2s}
+.sign-cta{display:flex;align-items:center;gap:clamp(18px,3vw,38px);flex-wrap:wrap;margin-top:var(--s5)}
+.mail{display:inline-block;font-family:var(--display);font-size:clamp(19px,3vw,33px);letter-spacing:-.02em;border-bottom:2px solid var(--accent);padding-bottom:5px;transition:color .2s,border-color .2s}
 .mail:hover{color:var(--accent)}
-.sign-dl{display:grid;grid-template-columns:repeat(4,1fr);margin-top:var(--s6);border-top:1px solid var(--rule)}
+.btn-dl{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--ink);border:1px solid var(--ink);padding:12px 20px;white-space:nowrap;transition:background .2s,color .2s}
+.btn-dl:hover{background:var(--ink);color:var(--paper)}
+.sign-dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));margin-top:var(--s6);border-top:1px solid var(--rule)}
 .sign-dl>div{padding:var(--s4) var(--s4) var(--s4) 0;border-right:1px solid var(--rule-soft)}
 .sign-dl>div:last-child{border-right:0}
 .sign-dl dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;color:var(--ink-4);text-transform:uppercase}
 .sign-dl dd{margin-top:9px;font-size:14px;color:var(--ink)}
-.sign-dl a{border-bottom:1px solid var(--accent);padding-bottom:1px;transition:color .2s}
+.sign-dl a{border-bottom:1px solid var(--accent);padding-bottom:1px;transition:color .2s;word-break:break-all}
 .sign-dl a:hover{color:var(--accent)}
-@media(max-width:820px){
-  .sign-dl{grid-template-columns:repeat(2,1fr)}
-  .sign-dl>div:nth-child(2){border-right:0}
-  .sign-dl>div:nth-child(-n+2){border-bottom:1px solid var(--rule-soft)}
-}
 @media(max-width:520px){
   .sign-dl{grid-template-columns:1fr}
   .sign-dl>div{border-right:0;border-bottom:1px solid var(--rule-soft);padding-right:0}
@@ -745,12 +743,14 @@ img{display:block;max-width:100%}
     <div class="sign-in rise">
       <h2>想把业务问题<br>做成系统？<span class="hl">聊聊。</span></h2>
       <p>市场营销 / AI 应用 / 商业分析方向，实习与校招均考虑。现居成都，可即刻到岗，接受异地入职。</p>
-      <a class="mail" href="mailto:3552922502@qq.com">3552922502@qq.com</a>
+      <div class="sign-cta">
+        <a class="mail" href="mailto:3552922502@qq.com">3552922502@qq.com</a>
+        <a class="btn-dl" href="assets/resume-scott-yi-2026-09.pdf" download>下载简历 PDF</a>
+      </div>
       <dl class="sign-dl">
         <div><dt>电话</dt><dd>139-9089-5999</dd></div>
         <div><dt>GitHub</dt><dd><a href="https://github.com/chengxi562-hue" target="_blank" rel="noopener">chengxi562-hue</a></dd></div>
-        <div><dt>院校</dt><dd>西南财经大学 · 工商管理学院</dd></div>
-        <div><dt>城市</dt><dd>成都（意向深圳 / 广州）</dd></div>
+        <div><dt>博客</dt><dd><a href="https://luyu-blog.app.workbuddy.host/" target="_blank" rel="noopener">投资研究笔记</a></dd></div>
       </dl>
     </div>
   </div>
