@@ -2,7 +2,7 @@
 
 个人求职作品集站点。单页静态站，无构建步骤，双击 `index.html` 即可本地查看。
 
-**在线地址**：https://scott-portfolio.app.workbuddy.host/
+**在线地址**：https://yichengxi.app.workbuddy.host/
 
 ## 内容
 
