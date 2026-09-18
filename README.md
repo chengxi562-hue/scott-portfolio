@@ -4,8 +4,9 @@
 
 **在线地址**：https://yichengxi.app.workbuddy.host/
 
-> 域名沿革：2026-09-18 由 `scott-portfolio.app.workbuddy.host` 迁至现址（旧域名已下线）。
-> 仓库名仍为 `scott-portfolio`（GitHub 仓库名，与域名无关）。
+> 域名沿革：2026-09-18 由 `scott-portfolio.app.workbuddy.host` 迁至 `yichengxi.app.workbuddy.host`
+> （旧域名已下线）。同日深夜另购入 **`yichengxi.cn`**，计划迁至自有域名。
+> 仓库名仍为 `scott-portfolio`（GitHub 仓库名，与域名无关；README 标题的显示名以站点为准）。
 
 ## 内容
 
