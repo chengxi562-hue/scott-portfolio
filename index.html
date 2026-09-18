@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>弋承熙 Scott · 把业务问题做成会自己报警的系统</title>
+<meta name="description" content="弋承熙（Scott Yi）。西南财经大学 × 法国南特高等商学院，市场营销（金融服务与营销）。主导搭建智能投研系统：18 阶段数据管线、124 项自动化校验规则；负责需求定义、流程设计与结果验收。">
+<meta name="author" content="弋承熙 Scott Yi">
+<meta name="theme-color" content="#FBFAF8">
+<style>
+/* ==========================================================================
+   字体 —— 数字与英文用设计字体，中文用系统宋体/黑体
+   ========================================================================== */
+@font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Instrument Sans";src:url("assets/fonts/InstrumentSans-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Instrument Sans";src:url("assets/fonts/InstrumentSans-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Outfit";src:url("assets/fonts/Outfit-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+
+/* ==========================================================================
+   设计令牌
+   ========================================================================== */
+:root{
+  --paper:#FBFAF8;
+  --paper-2:#F4F2ED;
+  --ink:#17171A;
+  --ink-2:#54524C;
+  --ink-3:#8B8880;
+  --ink-4:#B4B0A6;
+  --rule:#DFDBD1;
+  --rule-soft:#EBE8E0;
+  --accent:#1E4D3D;
+  --accent-soft:#EAF0EC;
+
+  --serif-cn:"Instrument Serif","Songti SC","STSong","Source Han Serif SC","Noto Serif SC",Georgia,serif;
+  --serif-en:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Instrument Sans",-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --display:"Outfit","Instrument Sans",-apple-system,"PingFang SC",sans-serif;
+
+  --s1:6px; --s2:10px; --s3:16px; --s4:24px; --s5:36px; --s6:56px; --s7:84px; --s8:120px;
+  --gut:clamp(20px,4.6vw,64px);
+  --wide:1240px;
+}
+
+/* ==========================================================================
+   基础
+   ========================================================================== */
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:70px}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.75;
+  font-feature-settings:"tnum" 1,"kern" 1;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:var(--accent);color:#fff}
+.wrap{max-width:var(--wide);margin:0 auto;padding:0 var(--gut)}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ==========================================================================
+   顶栏
+   ========================================================================== */
+.top{position:sticky;top:0;z-index:40;background:var(--paper);border-bottom:1px solid var(--rule-soft)}
+.top-in{max-width:var(--wide);margin:0 auto;padding:0 var(--gut);height:64px;display:flex;align-items:center;justify-content:space-between;gap:var(--s4)}
+.brand{display:flex;align-items:baseline;gap:9px}
+.brand b{font-family:var(--serif-cn);font-size:17px;font-weight:700;letter-spacing:.01em}
+.brand span{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);letter-spacing:.14em;text-transform:uppercase}
+.nav{display:flex;gap:clamp(14px,2.4vw,34px)}
+.nav a{position:relative;font-size:13px;color:var(--ink-2);padding-bottom:3px;transition:color .2s}
+.nav a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .34s cubic-bezier(.16,1,.3,1)}
+.nav a:hover{color:var(--ink)}
+.nav a:hover::after{transform:scaleX(1)}
+.nav a.cta{color:var(--accent);font-weight:500}
+@media(max-width:720px){.nav a:not(.cta){display:none}}
+
+/* ==========================================================================
+   章节通用
+   ========================================================================== */
+.sec{padding:var(--s8) 0 0}
+.sec-head{
+  display:flex;align-items:flex-end;gap:clamp(14px,2.2vw,28px);
+  padding-bottom:var(--s3);border-bottom:1px solid var(--ink);margin-bottom:var(--s6);
+}
+.sec-no{
+  font-family:var(--serif-en);font-size:clamp(44px,6vw,72px);line-height:.76;
+  color:#D6D2C7;letter-spacing:-.045em;flex:none;
+}
+.sec-head h2{font-family:var(--serif-cn);font-size:clamp(20px,2.5vw,28px);font-weight:700;letter-spacing:.005em;line-height:1.32;flex:1;min-width:0;padding-bottom:6px}
+.sec-head .aside{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);letter-spacing:.1em;flex:none;padding-bottom:10px;text-transform:uppercase}
+@media(max-width:640px){.sec-head .aside{display:none}.sec-no{font-size:40px}}
+
+/* ==========================================================================
+   首屏
+   ========================================================================== */
+.hero{padding:clamp(56px,9vw,110px) 0 0}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.54fr);gap:clamp(32px,4.4vw,72px);align-items:start}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:var(--s6)}}
+.kicker{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase}
+.kicker::before{content:"";width:24px;height:1px;background:var(--accent);flex:none}
+.hero h1{
+  font-family:var(--serif-cn);font-weight:700;
+  font-size:clamp(30px,4.5vw,55px);line-height:1.26;letter-spacing:-.008em;
+  margin:var(--s4) 0 0;
+}
+.hero h1 .hl{color:var(--accent)}
+.lede{margin-top:var(--s5);font-size:16px;line-height:1.85;color:var(--ink-2);max-width:44ch}
+.lede strong{color:var(--ink);font-weight:500;border-bottom:1px solid var(--accent);padding-bottom:1px}
+.facts{margin-top:var(--s6);border-top:1px solid var(--rule)}
+.facts div{display:flex;gap:var(--s3);align-items:baseline;padding:13px 0;border-bottom:1px solid var(--rule-soft)}
+.facts dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-4);flex:none;width:76px;text-transform:uppercase}
+.facts dd{font-size:13.5px;color:var(--ink)}
+.facts dd b{font-weight:500;color:var(--accent)}
+
+/* 系统面板：首屏右侧的视觉锚点 */
+.panel{border:1px solid var(--rule);background:var(--paper-2)}
+.panel-h{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px var(--s3);border-bottom:1px solid var(--rule);
+}
+.panel-h span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+.panel-b{padding:var(--s2) 0}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);padding:9px var(--s3);border-bottom:1px solid var(--rule-soft)}
+.row:last-child{border-bottom:0}
+.row dt{font-size:12.5px;color:var(--ink-2)}
+.row dd{font-family:var(--mono);font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+.panel-f{padding:11px var(--s3);border-top:1px solid var(--rule);font-family:var(--mono);font-size:10.5px;color:var(--ink-4);letter-spacing:.06em}
+
+/* ==========================================================================
+   数字条
+   ========================================================================== */
+.figs{margin-top:var(--s8);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+.figs-in{display:grid;grid-template-columns:repeat(6,1fr)}
+.fig{padding:var(--s4) var(--s3) var(--s5) 0;border-right:1px solid var(--rule-soft)}
+.fig:last-child{border-right:0}
+.fig .v{font-family:var(--display);font-size:clamp(27px,3.7vw,43px);line-height:1;letter-spacing:-.035em}
+.fig .v small{font-family:var(--sans);font-size:12px;color:var(--ink-3);letter-spacing:0;margin-left:2px;font-weight:400}
+.fig .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-4);margin-top:10px;text-transform:uppercase}
+@media(max-width:820px){
+  .figs-in{grid-template-columns:repeat(3,1fr)}
+  .fig:nth-child(3){border-right:0}
+  .fig:nth-child(-n+3){border-bottom:1px solid var(--rule-soft)}
+  .fig:nth-child(4),.fig:nth-child(5),.fig:nth-child(6){padding-top:var(--s4)}
+}
+
+/* ==========================================================================
+   做法
+   ========================================================================== */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule)}
+@media(max-width:820px){.steps{grid-template-columns:1fr}}
+.step{padding:var(--s4) var(--s4) var(--s5) 0;border-right:1px solid var(--rule-soft)}
+.step:last-child{border-right:0}
+@media(max-width:820px){.step{border-right:0;border-bottom:1px solid var(--rule-soft);padding-right:0}}
+.step .i{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);letter-spacing:.14em;display:block;margin-bottom:var(--s3)}
+.step h3{font-family:var(--serif-cn);font-size:17px;font-weight:700;margin-bottom:9px}
+.step p{font-size:13.5px;line-height:1.8;color:var(--ink-2)}
+
+/* ==========================================================================
+   故障自曝
+   ========================================================================== */
+.fail{margin-top:var(--s7);border-top:1px solid var(--ink);padding-top:var(--s5)}
+.fail-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(28px,4.5vw,72px)}
+@media(max-width:880px){.fail-grid{grid-template-columns:1fr}}
+.fail-lead .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;color:var(--accent);text-transform:uppercase}
+.fail-lead h3{font-family:var(--serif-cn);font-size:clamp(20px,2.5vw,27px);font-weight:700;line-height:1.42;margin:var(--s3) 0 var(--s4)}
+.fail-lead p{font-size:14.5px;line-height:1.88;color:var(--ink-2)}
+.case{padding:var(--s4) 0;border-bottom:1px solid var(--rule-soft)}
+.case:first-child{padding-top:0}
+.case .rule{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.04em;margin-bottom:9px}
+.case h4{font-family:var(--serif-cn);font-size:16px;font-weight:700;margin-bottom:9px}
+.case p{font-size:14px;line-height:1.85;color:var(--ink-2)}
+.case .out{display:inline-block;margin-top:11px;font-family:var(--mono);font-size:11px;color:var(--ink-3);border-left:2px solid var(--accent);padding-left:9px}
+
+/* ==========================================================================
+   项目
+   ========================================================================== */
+.proj{display:grid;grid-template-columns:minmax(0,.3fr) minmax(0,.7fr);gap:clamp(24px,4vw,64px);padding:var(--s6) 0;border-bottom:1px solid var(--rule)}
+.proj:first-of-type{padding-top:0}
+@media(max-width:880px){.proj{grid-template-columns:1fr;gap:var(--s4)}}
+.proj-no{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);letter-spacing:.12em}
+.proj h3{font-family:var(--serif-cn);font-size:clamp(19px,2.4vw,25px);font-weight:700;margin:9px 0 var(--s2);letter-spacing:.005em}
+.proj .when{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+.pill{display:inline-block;margin-top:11px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--accent);background:var(--accent-soft);padding:3px 9px}
+.blurb{font-size:15.5px;line-height:1.85;color:var(--ink);margin-bottom:var(--s4)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));border-top:1px solid var(--rule);margin-bottom:var(--s4)}
+.metrics>div{padding:var(--s3) var(--s3) var(--s4) 0;border-right:1px solid var(--rule-soft)}
+.metrics>div:last-child{border-right:0}
+.metrics .v{font-family:var(--display);font-size:clamp(19px,2.2vw,25px);line-height:1;letter-spacing:-.025em}
+.metrics .v small{font-family:var(--sans);font-size:11px;color:var(--ink-3);margin-left:2px}
+.metrics .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-4);margin-top:9px}
+.list{display:grid;gap:var(--s3)}
+.list li{display:grid;grid-template-columns:74px minmax(0,1fr);gap:var(--s3);font-size:14.5px;line-height:1.82;color:var(--ink-2)}
+.list li b{font-weight:500;color:var(--ink);font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;padding-top:4px}
+.list li em{font-style:normal;color:var(--ink);font-weight:500}
+.note{margin-top:var(--s4);padding:var(--s3) var(--s4);background:var(--paper-2);border-left:2px solid var(--accent);font-size:14px;line-height:1.85;color:var(--ink-2)}
+.note b{color:var(--ink);font-weight:500}
+
+/* 更多项目 */
+.more{margin-top:var(--s6);padding-top:var(--s5);border-top:1px solid var(--rule)}
+.more>h3{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-3);margin-bottom:var(--s2);text-transform:uppercase}
+.more-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:820px){.more-list{grid-template-columns:1fr}}
+.more-list li{padding:var(--s4) var(--s5) var(--s4) 0;border-bottom:1px solid var(--rule-soft)}
+.more-list li:nth-child(odd){border-right:1px solid var(--rule-soft)}
+.more-list li:nth-child(even){padding-left:var(--s5);padding-right:0}
+@media(max-width:820px){
+  .more-list li:nth-child(odd){border-right:0;padding-right:0}
+  .more-list li:nth-child(even){padding-left:0}
+}
+.more-list b{display:block;font-family:var(--serif-cn);font-size:15.5px;font-weight:700;margin-bottom:6px}
+.more-list span{display:block;font-size:13.5px;line-height:1.75;color:var(--ink-2)}
+
+/* ==========================================================================
+   时间线条目（实习 / 校园）
+   ========================================================================== */
+.tl{border-top:1px solid var(--rule)}
+.tl-item{display:grid;grid-template-columns:118px minmax(0,1fr);gap:clamp(20px,3vw,48px);padding:var(--s5) 0;border-bottom:1px solid var(--rule-soft)}
+@media(max-width:720px){.tl-item{grid-template-columns:1fr;gap:var(--s2)}}
+.tl-d{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);padding-top:5px;line-height:1.7}
+.tl-item h4{font-family:var(--serif-cn);font-size:17px;font-weight:700;letter-spacing:.005em}
+.tl-item .org{font-size:13px;color:var(--accent);margin-top:4px;font-weight:500}
+.tl-item ul{margin-top:var(--s3);display:grid;gap:9px}
+.tl-item li{font-size:14px;line-height:1.82;color:var(--ink-2);padding-left:15px;position:relative}
+.tl-item li::before{content:"";position:absolute;left:0;top:.66em;width:5px;height:1px;background:var(--ink-4)}
+.tl-item li b{font-weight:500;color:var(--ink)}
+.badge{display:inline-block;margin-top:var(--s3);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--accent);border:1px solid var(--accent);padding:3px 9px}
+
+/* ==========================================================================
+   教育
+   ========================================================================== */
+.edu{display:grid;grid-template-columns:minmax(0,.42fr) minmax(0,.58fr);gap:clamp(28px,4vw,72px)}
+@media(max-width:880px){.edu{grid-template-columns:1fr}}
+.edu h3{font-family:var(--serif-cn);font-size:clamp(18px,2.2vw,23px);font-weight:700;line-height:1.5}
+.edu .span{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-top:9px}
+.dl{display:grid;gap:var(--s3)}
+.dl-row{display:grid;grid-template-columns:78px minmax(0,1fr);gap:var(--s3);padding-bottom:var(--s3);border-bottom:1px solid var(--rule-soft)}
+.dl-row:last-child{border-bottom:0;padding-bottom:0}
+.dl-row dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-4);padding-top:5px;text-transform:uppercase}
+.dl-row dd{font-size:14px;line-height:1.8;color:var(--ink-2)}
+.grades{display:grid;gap:7px;margin-top:4px}
+.grades span{display:flex;justify-content:space-between;gap:var(--s3);font-size:13.5px;color:var(--ink-2);max-width:290px}
+.grades b{font-family:var(--display);font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+.caps{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule);margin-top:var(--s7)}
+@media(max-width:820px){.caps{grid-template-columns:repeat(2,1fr)}}
+.cap{padding:var(--s4) var(--s4) var(--s5) 0;border-right:1px solid var(--rule-soft)}
+.cap:last-child{border-right:0}
+@media(max-width:820px){.cap:nth-child(2){border-right:0}.cap{border-bottom:1px solid var(--rule-soft)}}
+.cap h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:var(--s3)}
+.cap li{font-size:13.5px;line-height:1.95;color:var(--ink-2)}
+
+/* ==========================================================================
+   联系
+   ========================================================================== */
+.sign{padding:var(--s8) 0 0}
+.sign-in{border-top:1px solid var(--ink);padding-top:var(--s6)}
+.sign h2{font-family:var(--serif-cn);font-weight:700;font-size:clamp(30px,5vw,58px);line-height:1.18;letter-spacing:-.012em}
+.sign h2 .hl{color:var(--accent)}
+.sign p{margin-top:var(--s4);font-size:15.5px;line-height:1.85;color:var(--ink-2);max-width:52ch}
+.mail{display:inline-block;margin-top:var(--s5);font-family:var(--display);font-size:clamp(19px,3vw,33px);letter-spacing:-.02em;border-bottom:2px solid var(--accent);padding-bottom:5px;transition:color .2s,border-color .2s}
+.mail:hover{color:var(--accent)}
+.sign-dl{display:grid;grid-template-columns:repeat(3,1fr);margin-top:var(--s6);border-top:1px solid var(--rule)}
+@media(max-width:720px){.sign-dl{grid-template-columns:1fr}}
+.sign-dl>div{padding:var(--s4) var(--s4) var(--s4) 0;border-right:1px solid var(--rule-soft)}
+.sign-dl>div:last-child{border-right:0}
+@media(max-width:720px){.sign-dl>div{border-right:0;border-bottom:1px solid var(--rule-soft);padding-right:0}}
+.sign-dl dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;color:var(--ink-4);text-transform:uppercase}
+.sign-dl dd{margin-top:9px;font-size:14px;color:var(--ink)}
+
+/* ==========================================================================
+   页脚
+   ========================================================================== */
+.foot{margin-top:var(--s8);border-top:1px solid var(--ink);padding-top:var(--s6)}
+.sig{font-family:var(--serif-en);font-size:clamp(50px,14vw,190px);line-height:.8;letter-spacing:-.05em;color:#EFECE4;user-select:none;overflow:hidden}
+.foot-in{max-width:var(--wide);margin:var(--s5) auto 0;padding:var(--s4) var(--gut) var(--s5);display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;border-top:1px solid var(--rule-soft)}
+.foot span{font-family:var(--mono);font-size:10.5px;color:var(--ink-4);letter-spacing:.06em}
+@media(max-width:640px){.foot-in{flex-direction:column;gap:7px}}
+
+/* 入场 */
+.rise{opacity:0;transform:translateY(14px)}
+.rise.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+@media(prefers-reduced-motion:reduce){.rise{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#top">
+      <b>弋承熙</b><span>Scott Yi</span>
+    </a>
+    <nav class="nav">
+      <a href="#method">做法</a>
+      <a href="#work">项目</a>
+      <a href="#intern">实习</a>
+      <a href="#campus">校园</a>
+      <a href="#edu">教育</a>
+      <a class="cta" href="#contact">联系</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= 首屏 ================= -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="kicker rise">作品集 · 2027 届 · 成都</p>
+        <h1 class="rise">把业务问题，<br>做成<span class="hl">会自己报警</span>的系统。</h1>
+        <p class="lede rise">
+          我不写代码。我定义规则、设计验收标准，并对系统产出的每一条结论负责——
+          从金融业务里发现问题，拆成可执行的流程，再用 AI 编程工具实现出来。
+          关键是让它<strong>出错时主动喊出来</strong>，而不是静默地交给我一份看起来正常的错误答案。
+        </p>
+        <dl class="facts rise">
+          <div><dt>求职意向</dt><dd>市场营销 / 金融科技 / 海外市场</dd></div>
+          <div><dt>意向城市</dt><dd><b>深圳</b> · <b>广州</b>（现居成都，可即刻到岗，接受异地入职）</dd></div>
+          <div><dt>学历</dt><dd>西南财经大学 × 法国南特高等商学院 · 2027 届</dd></div>
+        </dl>
+      </div>
+
+      <div class="panel rise">
+        <div class="panel-h"><span>system · 投研管线</span><i class="dot"></i></div>
+        <dl class="panel-b">
+          <div class="row"><dt>数据管线</dt><dd>18 phases</dd></div>
+          <div class="row"><dt>自动化校验</dt><dd>124 rules</dd></div>
+          <div class="row"><dt>功能模块</dt><dd>62</dd></div>
+          <div class="row"><dt>当前版本</dt><dd>v8.47</dd></div>
+          <div class="row"><dt>每交易日运行</dt><dd>15:30</dd></div>
+        </dl>
+        <div class="panel-f">需求定义 · 流程设计 · 结果验收</div>
+      </div>
+    </div>
+
+    <div class="figs rise">
+      <div class="figs-in">
+        <div class="fig"><div class="v">62</div><div class="k">功能模块</div></div>
+        <div class="fig"><div class="v">124</div><div class="k">校验规则</div></div>
+        <div class="fig"><div class="v">464</div><div class="k">视频转录归档</div></div>
+        <div class="fig"><div class="v">5,439</div><div class="k">结构化观点</div></div>
+        <div class="fig"><div class="v">1<small>篇</small></div><div class="k">国际期刊论文</div></div>
+        <div class="fig"><div class="v">204.5<small>h</small></div><div class="k">志愿服务</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 做法 ================= -->
+<section class="sec" id="method">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <span class="sec-no">01</span>
+      <h2>先定义「什么算做对了」，再动手</h2>
+      <span class="aside">method</span>
+    </div>
+
+    <div class="steps rise">
+      <div class="step">
+        <span class="i">STEP 01</span>
+        <h3>调研</h3>
+        <p>访谈、看数据、读公告与研报。先把问题问对，而不是急着找答案。</p>
+      </div>
+      <div class="step">
+        <span class="i">STEP 02</span>
+        <h3>定义</h3>
+        <p>拆成可执行的流程与指标，写清楚什么算成功、什么算失败。</p>
+      </div>
+      <div class="step">
+        <span class="i">STEP 03</span>
+        <h3>构建</h3>
+        <p>用 AI 编程工具把流程实现为系统或工作流；需求与验收标准由我掌握。</p>
+      </div>
+      <div class="step">
+        <span class="i">STEP 04</span>
+        <h3>验收与迭代</h3>
+        <p>看真实产出、定位根因，把每一次事故固化成一条新的校验规则。</p>
+      </div>
+    </div>
+
+    <div class="fail rise">
+      <div class="fail-grid">
+        <div class="fail-lead">
+          <span class="tag">fail loud, not silent</span>
+          <h3>系统出错时应该喊出来，而不是交给我一份看起来正常的错误答案。</h3>
+          <p>
+            投研系统跑了十个月，最难的不是让它跑起来，而是让它诚实地告诉我「我坏了」。
+            右边两条校验规则，每一条都对应一次真实事故——它们不是写代码时想到的，
+            是系统骗了我之后补上去的。
+          </p>
+        </div>
+        <div>
+          <div class="case">
+            <div class="rule">Rule · 非交易日不得豁免检查</div>
+            <h4>连续 19 天「一切正常」，其实是坏了</h4>
+            <p>判定逻辑里有一条「非交易日不用查」，结果把周末发生的故障全盖住了。系统每天照常发简报说正常，我到第十九天才发现。</p>
+            <span class="out">这是业务规则的漏洞，不是代码 bug</span>
+          </div>
+          <div class="case">
+            <div class="rule">Rule · 枚举晚于处理不得判为停摆</div>
+            <h4>122 条数据被静默误判成「上游挂了」</h4>
+            <p>上游任务晚上跑、下游任务早上跑，正常的时序错配被误判为停摆，导致 122 条数据一直没人处理，而简报天天说正常。</p>
+            <span class="out">改为超阈值才报警，并补一条必读真实返回值的测试</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 项目 ================= -->
+<section class="sec" id="work">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <span class="sec-no">02</span>
+      <h2>把想法，做成能持续跑的东西</h2>
+      <span class="aside">projects</span>
+    </div>
+
+    <article class="proj rise">
+      <div>
+        <div class="proj-no">Project 01</div>
+        <h3>智能投研系统</h3>
+        <div class="when">2025.11 — 至今</div><br>
+        <span class="pill">v8.47</span>
+      </div>
+      <div>
+        <p class="blurb">一个每天自动产出投资简报、账户快照与增量情报的个人研究系统，代码与历史数据全部纳入版本管理。</p>
+        <div class="metrics">
+          <div><div class="v">62</div><div class="k">功能模块</div></div>
+          <div><div class="v">18</div><div class="k">阶段管线</div></div>
+          <div><div class="v">124</div><div class="k">校验规则</div></div>
+          <div><div class="v">6</div><div class="k">类缺陷已修复</div></div>
+        </div>
+        <ul class="list">
+          <li><b>架构</b><span>设计 18 阶段数据管线与 <em>124 项自动化校验规则</em>，系统含 62 个模块，代码与历史数据全部纳入版本管理。</span></li>
+          <li><b>自曝</b><span>数据通道断供、产物缺失、结论与数据矛盾时<em>主动报警</em>而非静默失败；运行期间累计识别并修复 6 类隐蔽缺陷。</span></li>
+          <li><b>产出</b><span>每日自动生成投资简报、账户快照与增量情报，并推送至邮箱。</span></li>
+        </ul>
+        <p class="note"><b>关于分工</b> — 我负责需求定义、流程设计与结果验收，实现过程借助 AI 编程工具完成。具体的工程判断——比如「什么情况下必须报警」「哪条结论不可信」——由我定义，这也是这个系统真正的价值所在。</p>
+      </div>
+    </article>
+
+    <article class="proj rise">
+      <div>
+        <div class="proj-no">Project 02</div>
+        <h3>抖音观点知识库管线</h3>
+        <div class="when">知识库工程</div><br>
+        <span class="pill">5,439 条观点</span>
+      </div>
+      <div>
+        <p class="blurb">把 4 位财经博主的 464 个视频，变成可检索、可反复使用的结构化观点库。</p>
+        <div class="metrics">
+          <div><div class="v">464</div><div class="k">视频转录归档</div></div>
+          <div><div class="v">5,439</div><div class="k">条结构化观点</div></div>
+          <div><div class="v">400<small>MB+</small></div><div class="k">单日释放磁盘</div></div>
+        </div>
+        <ul class="list">
+          <li><b>管线</b><span>搭建端到端批处理管线，完成 <em>464 个视频的自动转录与归档</em>，并抽取 5,439 条带原文引用与时间戳的结构化观点；素材处理完成后自动回收。</span></li>
+          <li><b>复用</b><span>四个库<em>共用同一套脚本</em>（靠环境变量切换数据目录），新增博主不需复制代码；设计断点续跑与进度台账，长任务中断后可从中断处继续。</span></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="proj rise">
+      <div>
+        <div class="proj-no">Project 03</div>
+        <h3>多模型 AI 网关</h3>
+        <div class="when">2026.06 — 至今</div><br>
+        <span class="pill">运行中</span>
+      </div>
+      <div>
+        <p class="blurb">一套接口背后接住多家大模型，自动记账每一次调用的花费、按预算拦截超支——让「同时用多个模型干活」从失控变得可管理。</p>
+        <div class="metrics">
+          <div><div class="v">7</div><div class="k">家模型接入</div></div>
+          <div><div class="v">3,118</div><div class="k">行代码</div></div>
+          <div><div class="v">1</div><div class="k">套统一协议</div></div>
+        </div>
+        <ul class="list">
+          <li><b>接入</b><span>把多家模型的接口收敛成一套 OpenAI 兼容协议，上层调用方换模型不用改代码；新增一家提供商只需加一个适配器。</span></li>
+          <li><b>成本</b><span>每次调用落库记账，随时能看到各模型分别花了多少；<em>预算触顶自动拦截</em>，避免自动化任务在看不见的地方烧钱。</span></li>
+        </ul>
+      </div>
+    </article>
+
+    <div class="more rise">
+      <h3>还有这些 — 同样做出来、在跑或已归档的系统</h3>
+      <ul class="more-list">
+        <li><b>资讯判断平台</b><span>把散落资讯归并成事件、判断轻重缓急并给出结论；零第三方依赖的本地服务，五层架构。</span></li>
+        <li><b>多体系交叉验证引擎</b><span>多套独立推算各自出结论，压到统一坐标系做硬对拍；冲突明示而不抹平，不给综合评分。</span></li>
+        <li><b>大学生涯规划台</b><span>纯前端应用，双击即用：190 条任务线、74 项材料清单、61 个资源入口。</span></li>
+        <li><b>个人博客</b><span>已上线运行，含文章管理后台、账号体系与云端图片存储。</span></li>
+        <li><b>桌面自动化框架</b><span>「截图 → 识别 → 注入键鼠 → 校验」闭环，用于替代人在图形界面上的重复操作。</span></li>
+        <li><b>观点知识库 ×4</b><span>覆盖 4 位财经博主、464 个视频、5,439 条结构化观点（见 Project 02）。</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 实习 ================= -->
+<section class="sec" id="intern">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <span class="sec-no">03</span>
+      <h2>在真实业务里，理解钱是怎么流动的</h2>
+      <span class="aside">internships</span>
+    </div>
+
+    <div class="tl rise">
+      <div class="tl-item">
+        <div class="tl-d">2026.05<br>— 07</div>
+        <div>
+          <h4>大堂助理</h4>
+          <div class="org">四川银行</div>
+          <ul>
+            <li><b>客户服务与营销</b>：主动接待并引导客户办理个人及对公业务，日均服务 40+ 人次，有效分流柜台压力。</li>
+            <li><b>产品推介与转化</b>：学习银行零售产品体系，针对客户需求推介理财、存款等产品，协助完成多笔产品销售转化。</li>
+            <li><b>数字化工具应用</b>：熟练操作智能柜员机、手机银行等数字化渠道，引导中老年客户完成线上业务迁移。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2026.03<br>— 04</div>
+        <div>
+          <h4>投资服务部</h4>
+          <div class="org">成都高投创业投资有限公司</div>
+          <ul>
+            <li><b>税收优惠申报</b>：协助完成 5 支创业投资基金的《享受税收政策的创业投资基金证明材料申请表》填充与材料整理。</li>
+            <li><b>基金投标与路演</b>：参与四川省成果转化投资引导基金（第四批）子基金管理机构遴选，完成标书填写与路演 PPT 制作。</li>
+            <li><b>战略合作推进</b>：参与起草并修订《关于公司与成都银行股份有限公司签署战略合作框架协议的请示》，推动「投贷联动」合作机制建立。</li>
+            <li><b>投资项目支持</b>：协助完成储备项目的立项报告分析与尽职调查材料整理，参与直投业务流程及储备项目台账的维护与更新。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2025.07<br>— 09</div>
+        <div>
+          <h4>国际合作部 · 海外销售支持岗</h4>
+          <div class="org">星途领航（腾盾科创）</div>
+          <ul>
+            <li><b>项目运营支持</b>：跟进与阿联酋哈利法大学联合开展的无人机研学项目，统筹课程物料筹备、场地协调等后勤保障。</li>
+            <li><b>文化体验落地</b>：策划并落地外国学生四川生活文化体验活动，对接场地与资源并全程跟进执行。</li>
+            <li><b>涉外服务保障</b>：负责哈利法大学学生在川期间日常对接，及时响应并解决饮食、出行等问题。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 校园 ================= -->
+<section class="sec" id="campus">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <span class="sec-no">04</span>
+      <h2>在组织里，把事情落到地上</h2>
+      <span class="aside">campus · global</span>
+    </div>
+
+    <div class="tl rise">
+      <div class="tl-item">
+        <div class="tl-d">2025.09<br>— 12</div>
+        <div>
+          <h4>第五届 CMAU 市场研究与商业策划大赛</h4>
+          <div class="org">核心成员 · 恒安标准人寿</div>
+          <ul>
+            <li>负责市场调研与数据分析，深入参与企业座谈会，与任课教师及企业导师共同探讨优化方向。</li>
+            <li>提出「以播客为载体的 O2O 营销模式」创新方案，获企业方认可。</li>
+          </ul>
+          <span class="badge">全国赛西部赛区三等奖</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2024.01<br>— 05</div>
+        <div>
+          <h4>第三届 CMAU 市场研究与商业策划大赛</h4>
+          <div class="org">队长 · 众邦银行品牌年轻化</div>
+          <ul>
+            <li>带领 5 人团队完成「互联网银行场景创新与跨界营销」专项调研，搭建数据分析模型并设计问卷。</li>
+            <li>打造《Z+ 梦工厂》营销体系；赛事共吸引 48,000 名学生、3,786 支团队参赛。</li>
+          </ul>
+          <span class="badge">校内选拔赛二等奖</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2024.01<br>— 02</div>
+        <div>
+          <h4>IBEP 国际商业体验项目</h4>
+          <div class="org">友邦保险（中国香港）</div>
+          <ul>
+            <li>完成保险产品设计、风险评估及客户画像分析等 5 个模块学习，结业成绩位列前 20%。</li>
+            <li>主导「高净值人群保险配置方案」模拟项目，精准匹配 3 类保险产品组合。</li>
+            <li>创新提出「保险 + 健康管理」场景化营销方案，获管培生直通资格。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2024.01</div>
+        <div>
+          <h4>学术综合培育项目一期</h4>
+          <div class="org">队长 · 香港大学中国商业学院</div>
+          <ul>
+            <li>带领团队完成《世界大学排名研究》27 页报告及英文展示。</li>
+            <li>研究覆盖 QS / THE / US News 三大排名体系，提出「学术影响力量化评估模型」。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2024.09<br>— 2025.06</div>
+        <div>
+          <h4>志愿者工作部部长</h4>
+          <div class="org">共青团西南财经大学校团委</div>
+          <ul>
+            <li>统筹部门日常事务，涵盖宣传推文撰写与志愿服务活动调度；策划并参与多项大型考务及赛会志愿活动（2024「一带一路」合作媒体论坛、研究生考务志愿服务等）。</li>
+            <li>参与统筹百年校庆志愿服务，接待校友百余名。</li>
+          </ul>
+          <span class="badge">志愿服务 204.5 小时 · 一星志愿者</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2025.06<br>— 08</div>
+        <div>
+          <h4>「三下乡」社会实践 · 强国青年 · 星火新程</h4>
+          <div class="org">队员 · 四川，巴中</div>
+          <ul>
+            <li>聚焦乡村学子需求，独立完成财经素养、科技应用类特色课程设计并落地教学。</li>
+            <li>深入乡村调研民生及红色资源，梳理发展痛点，输出针对性建议。</li>
+          </ul>
+          <span class="badge">中国日报网等 6 家媒体报道</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-d">2025.01<br>— 03</div>
+        <div>
+          <h4>「西财暖冬」社会实践 · 青衿引财</h4>
+          <div class="org">队员 · 成都 · 天府街道</div>
+          <ul>
+            <li>与北京大学「力行计划」实践队联合开展校地研讨会，共同制定「高校—社区—企业」协同育人方案，推动温江区天府街道建立常态化财经教育基地。</li>
+            <li>撰写 7 篇活动推文，累计阅读量 5000+。</li>
+          </ul>
+          <span class="badge">优秀实践团队二等奖</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 教育 ================= -->
+<section class="sec" id="edu">
+  <div class="wrap">
+    <div class="sec-head rise">
+      <span class="sec-no">05</span>
+      <h2>金融 + 营销的训练，加上一套自己造的工具</h2>
+      <span class="aside">education</span>
+    </div>
+
+    <div class="edu rise">
+      <div>
+        <h3>西南财经大学<br>法国南特高等商学院（Audencia）</h3>
+        <div class="span">2023.09 — 2027.06（预计）</div>
+      </div>
+      <dl class="dl">
+        <div class="dl-row"><dt>专业</dt><dd>市场营销（金融服务与营销方向）· 中外联合培养 · 成都</dd></div>
+        <div class="dl-row"><dt>均分</dt><dd><span class="num">81.89</span> / 100</dd></div>
+        <div class="dl-row"><dt>专业课</dt><dd>
+          <div class="grades">
+            <span>金融科技 <b>4.1</b></span>
+            <span>营销调研与数据分析 <b>4.0</b></span>
+            <span>金融服务营销 <b>3.9</b></span>
+            <span>消费者行为学 <b>3.7</b></span>
+            <span>管理学原理（英） <b>3.7</b></span>
+          </div>
+        </dd></div>
+        <div class="dl-row"><dt>荣誉</dt><dd>西南财经大学社会工作和志愿服务奖 · 优秀共青团员（校级）· 优秀共青团干部（校级）</dd></div>
+      </dl>
+    </div>
+
+    <div class="caps rise">
+      <div class="cap">
+        <h4>金融与研究</h4>
+        <ul>
+          <li>公告与研报阅读</li>
+          <li>证券与产业研究</li>
+          <li>股票、期货与期权</li>
+          <li>创投尽调与投贷联动</li>
+        </ul>
+      </div>
+      <div class="cap">
+        <h4>数据与工具</h4>
+        <ul>
+          <li>Excel、见数</li>
+          <li>指标体系设计</li>
+          <li>数据管线设计</li>
+          <li>自动化校验规则</li>
+        </ul>
+      </div>
+      <div class="cap">
+        <h4>AI 与工作流</h4>
+        <ul>
+          <li>需求定义 → 结果验收</li>
+          <li>AI 编程工具实践</li>
+          <li>批处理管线搭建</li>
+          <li>提示词与流程设计</li>
+        </ul>
+      </div>
+      <div class="cap">
+        <h4>语言与其他</h4>
+        <ul>
+          <li>英语 IELTS 6.5 · CET-6 544</li>
+          <li>中文（母语）· 四川话</li>
+          <li>骑行累计 3000km+</li>
+          <li>C1 驾照</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 联系 ================= -->
+<section class="sign" id="contact">
+  <div class="wrap">
+    <div class="sign-in rise">
+      <h2>想把业务问题<br>做成系统？<span class="hl">聊聊。</span></h2>
+      <p>市场营销 / 金融科技 / 海外市场方向，校招及管培生岗。现居成都，可即刻到岗，接受异地入职。</p>
+      <a class="mail" href="mailto:3552922502@qq.com">3552922502@qq.com</a>
+      <dl class="sign-dl">
+        <div><dt>电话</dt><dd>139-9089-5999</dd></div>
+        <div><dt>院校</dt><dd>西南财经大学 · 工商管理学院</dd></div>
+        <div><dt>城市</dt><dd>成都（意向深圳 / 广州）</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="sig" aria-hidden="true">Scott Yi</div>
+  </div>
+  <div class="foot-in">
+    <span>© 2026 弋承熙</span>
+    <span>业务规则由我定义 · 实现交给工具 · 结果由我负责</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var els=document.querySelectorAll('.rise');
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.04,rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>
