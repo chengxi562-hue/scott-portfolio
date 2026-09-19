@@ -88,12 +88,9 @@ body{background:var(--paper);font-size:15.5px;background-image:none}
 .btn-main:hover{background:#A9381F}
 .btn-ghost{border:1px solid rgba(255,255,255,.28);color:var(--cream)}
 .btn-ghost:hover{background:rgba(255,255,255,.08)}
-.hero-photo{position:relative;align-self:end}
-.hero-photo img{width:100%;height:auto;filter:saturate(.96)}
-.hero-photo::after{
-  content:"2027 届 · 市场营销 × AI";position:absolute;left:0;bottom:8%;
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:#8E877A;
-}
+.hero-photo{position:relative;align-self:end;margin:0}
+.hero-photo picture{display:block}
+.hero-photo img{width:100%;height:auto;display:block;border-radius:2px}
 .facts{border-top-color:rgba(255,255,255,.16)}
 .facts div{border-bottom-color:rgba(255,255,255,.12)}
 .facts dt{color:#8E877A}
@@ -532,7 +529,11 @@ img{display:block;max-width:100%}
 
       <div class="hero-right">
         <figure class="hero-photo rise">
-          <img src="assets/portrait-hero.png" width="658" height="1075" alt="弋承熙的双色调人像剪影">
+          <picture>
+            <source srcset="assets/portrait-illustration.webp" type="image/webp">
+            <img src="assets/portrait-illustration.jpg" width="864" height="1211"
+                 alt="弋承熙的插画风格半身头像">
+          </picture>
         </figure>
       </div>
     </div>
