@@ -1,0 +1,24 @@
+(function(){'use strict';var doc=document,root=doc.documentElement;function q(s,c){return (c||doc).querySelector(s)}function qa(s,c){return Array.prototype.slice.call((c||doc).querySelectorAll(s))}var i;doc.body.classList.add('js');qa('.js-only').forEach(function(el){el.hidden=false});
+var themeBtn=q('.theme-toggle');function paintTheme(){var dark=root.dataset.theme==='dark';if(themeBtn){themeBtn.setAttribute('aria-pressed',String(dark));themeBtn.textContent=dark?'浅色模式':'深色模式';themeBtn.setAttribute('aria-label',dark?'切换到浅色模式':'切换到深色模式')}}paintTheme();if(themeBtn){themeBtn.addEventListener('click',function(){var next=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=next;try{localStorage.setItem('site-theme',next)}catch(e){}paintTheme()})}
+var toggle=q('.nav-toggle'),nav=q('#site-nav');if(toggle&&nav){function setNav(open){toggle.setAttribute('aria-expanded',String(open));nav.hidden=!open}var mobileNav=matchMedia('(max-width: 640px)');function syncNav(){setNav(false);nav.hidden=mobileNav.matches}syncNav();mobileNav.addEventListener('change',syncNav);toggle.addEventListener('click',function(){setNav(toggle.getAttribute('aria-expanded')!=='true')});nav.addEventListener('click',function(e){if(e.target.closest('a')&&matchMedia('(max-width: 640px)').matches){setNav(false)}});doc.addEventListener('keydown',function(e){if(e.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){setNav(false);toggle.focus()}})}
+var filterBox=q('.filters'),cards=qa('.card'),status=q('.filter-status');function applyFilter(name){var shown=0;cards.forEach(function(card){var ok=name==='all'||card.dataset.category===name;card.hidden=!ok;if(ok)shown+=1});qa('button',filterBox).forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.filter===name))});if(status){status.textContent='显示 '+shown+' / '+cards.length+' 个实践'}}if(filterBox){filterBox.addEventListener('click',function(e){var b=e.target.closest('button[data-filter]');if(b){applyFilter(b.dataset.filter)}});applyFilter('all')}function openFromHash(){var id=location.hash.slice(1);if(!id)return;var target=doc.getElementById(id);if(!target)return;if(filterBox&&target.classList.contains('card')){applyFilter('all')}var d=target.matches('details')?target:q('details',target);if(d){d.open=true}}addEventListener('hashchange',openFromHash);openFromHash();
+var demo=q('.demo');if(demo){var steps=qa('.pipeline li',demo),result=q('.result',demo),note=q('#demo-note',demo),buttons=qa('.demo-controls button',demo);function setMode(mode){var stale=mode==='stale';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===mode))});steps.forEach(function(li,idx){li.classList.remove('on','stop');if(stale){if(idx<1){li.classList.add('on')}else if(idx===1){li.classList.add('stop')}}else{li.classList.add('on')}});result.classList.toggle('stop',stale);result.classList.toggle('ok',!stale);q('b',result).textContent=stale?'需要复核':'检查通过';q('span',result).textContent=stale?'暂停后续处理':'继续整理';note.textContent=stale?'数据过期时，先标记问题，避免把未知包装成正常结果。':'数据在有效期内时，流程进入下一步。'}buttons.forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.mode)})})}
+var copy=q('.copy'),copyStatus=q('.copy-status');if(copy){copy.addEventListener('click',function(){var email=copy.dataset.email||copy.textContent;function fail(){copyStatus.textContent='复制未成功，请直接选中页面中的邮箱地址。'}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(email).then(function(){copyStatus.textContent='邮箱已复制。'}).catch(fail)}else{fail()}})}
+var links=qa('nav a'),sections=links.map(function(a){return q(a.getAttribute('href'))}).filter(Boolean);if('IntersectionObserver' in window&&sections.length){var seen=new Set();var io=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){seen.add(en.target.id)}else{seen.delete(en.target.id)}});var current=null;sections.forEach(function(s){if(seen.has(s.id)){current=s.id}});links.forEach(function(a){if(a.getAttribute('href')==='#'+current){a.setAttribute('aria-current','location')}else{a.removeAttribute('aria-current')}})},{rootMargin:'-35% 0px -55% 0px',threshold:0});sections.forEach(function(s){io.observe(s)})}
+})();
+
+(function(){
+  'use strict';
+  var desk=document.querySelector('#spatial-desk');
+  var expand=document.querySelector('#expand-desk');
+  var angle=document.querySelector('#desk-angle');
+  if(!desk||!expand||!angle)return;
+  expand.addEventListener('click',function(){
+    var active=expand.getAttribute('aria-pressed')!=='true';
+    expand.setAttribute('aria-pressed',String(active));
+    desk.classList.toggle('expanded',active);
+    expand.textContent=active?'合拢工作台':'展开工作台';
+    document.querySelector('#spatial-status').textContent=active?'理解问题 → 组织工具 → 检查结果。':'三层工作台：问题、工具、判断。';
+  });
+  angle.addEventListener('input',function(){desk.style.setProperty('--scene-angle',Number(angle.value)+'deg')});
+})();
