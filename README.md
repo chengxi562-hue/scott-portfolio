@@ -1,3 +1,9 @@
+## 当前最终版：双语个人实践图册
+
+语言切换位于明暗模式旁。采用照片参考个人插画、项目流程图解与可分享的逐步案例阅读器。当前入口 index.html；字典 assets/languages.js、逻辑 assets/site.js、样式 assets/site.css。无构建步骤。原始照片和未采纳草稿不发布。
+
+历史版本说明如下，其中叠纸/模拟输入等旧交互已由案例阅读器替代。
+
 # 弋承熙 Yi Chengxi · 个人实践网站
 
 站点：https://yichengxi.cn/
