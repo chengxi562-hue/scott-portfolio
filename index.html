@@ -6,7 +6,15 @@
 <title>弋承熙 Yi Chengxi · 把业务问题做成会自己报警的系统</title>
 <meta name="description" content="弋承熙（Yi Chengxi）。西南财经大学 × 法国南特高等商学院，市场营销（金融服务与营销）。主导搭建智能投研系统：18 阶段数据管线、124 项自动化校验规则；负责需求定义、流程设计与结果验收。">
 <meta name="author" content="弋承熙 Yi Chengxi">
-<meta name="theme-color" content="#FBFAF8">
+<link rel="canonical" href="https://yichengxi.cn/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="弋承熙 Yi Chengxi · 把业务问题做成会自己报警的系统">
+<meta property="og:description" content="市场营销 × AI 应用 × 商业分析。展示真实系统、实习经历与可验证成果。">
+<meta property="og:url" content="https://yichengxi.cn/">
+<meta property="og:image" content="https://yichengxi.cn/assets/system-desk.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F2EFE7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23171715'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='38' fill='%23F2EFE7'%3EY%3C/text%3E%3C/svg%3E">
 <style>
 /* ==========================================================================
    字体 —— 数字与英文用设计字体，中文用系统宋体/黑体
@@ -22,16 +30,17 @@
    设计令牌
    ========================================================================== */
 :root{
-  --paper:#FBFAF8;
-  --paper-2:#F4F2ED;
-  --ink:#17171A;
-  --ink-2:#54524C;
-  --ink-3:#8B8880;
-  --ink-4:#B4B0A6;
-  --rule:#DFDBD1;
-  --rule-soft:#EBE8E0;
-  --accent:#1E4D3D;
-  --accent-soft:#EAF0EC;
+  --paper:#F2EFE7;
+  --paper-2:#E9E4D8;
+  --ink:#171715;
+  --ink-2:#555149;
+  --ink-3:#888277;
+  --ink-4:#AEA79A;
+  --rule:#D1C9BB;
+  --rule-soft:#E1DBCF;
+  --accent:#A63D2F;
+  --accent-soft:#F1E1DC;
+  --blue:#254A78;
 
   --serif-cn:"Instrument Serif","Songti SC","STSong","Source Han Serif SC","Noto Serif SC",Georgia,serif;
   --serif-en:"Instrument Serif",Georgia,"Times New Roman",serif;
@@ -41,7 +50,7 @@
 
   --s1:6px; --s2:10px; --s3:16px; --s4:24px; --s5:36px; --s6:56px; --s7:84px; --s8:120px;
   --gut:clamp(20px,4.6vw,64px);
-  --wide:1240px;
+  --wide:1080px;
 }
 
 /* ==========================================================================
@@ -54,6 +63,8 @@ body{
   font-family:var(--sans);font-size:15px;line-height:1.75;
   font-feature-settings:"tnum" 1,"kern" 1;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  background-image:linear-gradient(rgba(23,23,21,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(23,23,21,.022) 1px,transparent 1px);
+  background-size:32px 32px;
 }
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
@@ -97,9 +108,10 @@ img{display:block;max-width:100%}
 /* ==========================================================================
    首屏
    ========================================================================== */
-.hero{padding:clamp(56px,9vw,110px) 0 0}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.54fr);gap:clamp(32px,4.4vw,72px);align-items:start}
+.hero{padding:clamp(56px,9vw,104px) 0 0}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,.58fr);gap:clamp(32px,4.4vw,68px);align-items:start}
 @media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:var(--s6)}}
+.hero-right{display:grid;gap:var(--s3)}
 .kicker{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase}
 .kicker::before{content:"";width:24px;height:1px;background:var(--accent);flex:none}
 .hero h1{
@@ -108,7 +120,7 @@ img{display:block;max-width:100%}
   margin:var(--s4) 0 0;
 }
 .hero h1 .hl{color:var(--accent)}
-.lede{margin-top:var(--s5);font-size:16px;line-height:1.85;color:var(--ink-2);max-width:44ch}
+.lede{margin-top:var(--s5);font-size:16px;line-height:1.85;color:var(--ink-2);max-width:48ch}
 .lede strong{color:var(--ink);font-weight:500;border-bottom:1px solid var(--accent);padding-bottom:1px}
 .facts{margin-top:var(--s6);border-top:1px solid var(--rule)}
 .facts div{display:flex;gap:var(--s3);align-items:baseline;padding:13px 0;border-bottom:1px solid var(--rule-soft)}
@@ -117,24 +129,29 @@ img{display:block;max-width:100%}
 .facts dd b{font-weight:500;color:var(--accent)}
 
 /* 系统面板：首屏右侧的视觉锚点 */
-.panel{border:1px solid var(--rule);background:var(--paper-2)}
+.hero-art{position:relative;overflow:hidden;background:var(--ink);border:1px solid var(--ink)}
+.hero-art img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:50% 12%;filter:saturate(.92) contrast(1.04)}
+.hero-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 58%,rgba(0,0,0,.52));pointer-events:none}
+.hero-art figcaption{position:absolute;left:var(--s3);right:var(--s3);bottom:var(--s3);z-index:1;color:#F8F4EA;font-size:12px;line-height:1.55;text-shadow:0 1px 12px rgba(0,0,0,.45)}
+.hero-art figcaption span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#EBC2B7;text-transform:uppercase}
+.panel{border:1px solid var(--ink);background:var(--ink);color:var(--paper)}
 .panel-h{
   display:flex;align-items:center;justify-content:space-between;
-  padding:11px var(--s3);border-bottom:1px solid var(--rule);
+  padding:11px var(--s3);border-bottom:1px solid rgba(255,255,255,.15);
 }
-.panel-h span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}
+.panel-h span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:#BDB6A8;text-transform:uppercase}
+.dot{width:6px;height:6px;border-radius:50%;background:#D86955;box-shadow:0 0 0 4px rgba(216,105,85,.16);flex:none}
 .panel-b{padding:var(--s2) 0}
-.row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);padding:9px var(--s3);border-bottom:1px solid var(--rule-soft)}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);padding:9px var(--s3);border-bottom:1px solid rgba(255,255,255,.12)}
 .row:last-child{border-bottom:0}
-.row dt{font-size:12.5px;color:var(--ink-2)}
-.row dd{font-family:var(--mono);font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
-.panel-f{padding:11px var(--s3);border-top:1px solid var(--rule);font-family:var(--mono);font-size:10.5px;color:var(--ink-4);letter-spacing:.06em}
+.row dt{font-size:12.5px;color:#D4CEC1}
+.row dd{font-family:var(--mono);font-size:12.5px;color:#FFF9EF;font-variant-numeric:tabular-nums}
+.panel-f{padding:11px var(--s3);border-top:1px solid rgba(255,255,255,.15);font-family:var(--mono);font-size:10.5px;color:#AFA89B;letter-spacing:.06em}
 
 /* ==========================================================================
    数字条
    ========================================================================== */
-.figs{margin-top:var(--s8);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+.figs{margin-top:var(--s8);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);background:rgba(233,228,216,.34)}
 .figs-in{display:grid;grid-template-columns:repeat(6,1fr)}
 .fig{padding:var(--s4) var(--s3) var(--s5) 0;border-right:1px solid var(--rule-soft)}
 .fig:last-child{border-right:0}
@@ -264,7 +281,7 @@ img{display:block;max-width:100%}
 .sign-cta{display:flex;align-items:center;gap:clamp(18px,3vw,38px);flex-wrap:wrap;margin-top:var(--s5)}
 .mail{display:inline-block;font-family:var(--display);font-size:clamp(19px,3vw,33px);letter-spacing:-.02em;border-bottom:2px solid var(--accent);padding-bottom:5px;transition:color .2s,border-color .2s}
 .mail:hover{color:var(--accent)}
-.btn-dl{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--ink);border:1px solid var(--ink);padding:12px 20px;white-space:nowrap;transition:background .2s,color .2s}
+.btn-dl{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--paper);background:var(--ink);border:1px solid var(--ink);padding:12px 20px;white-space:nowrap;transition:background .2s,color .2s}
 .btn-dl:hover{background:var(--ink);color:var(--paper)}
 .sign-dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));margin-top:var(--s6);border-top:1px solid var(--rule)}
 .sign-dl>div{padding:var(--s4) var(--s4) var(--s4) 0;border-right:1px solid var(--rule-soft)}
@@ -331,16 +348,22 @@ img{display:block;max-width:100%}
         </dl>
       </div>
 
-      <div class="panel rise">
-        <div class="panel-h"><span>system · 投研管线</span><i class="dot"></i></div>
-        <dl class="panel-b">
-          <div class="row"><dt>数据管线</dt><dd>18 phases</dd></div>
-          <div class="row"><dt>自动化校验</dt><dd>124 rules</dd></div>
-          <div class="row"><dt>功能模块</dt><dd>62</dd></div>
-          <div class="row"><dt>当前版本</dt><dd>v8.48</dd></div>
-          <div class="row"><dt>每交易日运行</dt><dd>15:30</dd></div>
-        </dl>
-        <div class="panel-f">需求定义 · 流程设计 · 结果验收</div>
+      <div class="hero-right">
+        <figure class="hero-art rise">
+          <img src="assets/system-desk.png" width="1024" height="1024" alt="系统工作台概念插画：行情、流程节点与代码三块屏幕，上方有故障警示标识">
+          <figcaption><span>field note 01</span><br>系统真正的价值，不是自动跑，而是在出错时主动喊出来。</figcaption>
+        </figure>
+        <div class="panel rise">
+          <div class="panel-h"><span>system · 投研管线</span><i class="dot"></i></div>
+          <dl class="panel-b">
+            <div class="row"><dt>数据管线</dt><dd>18 phases</dd></div>
+            <div class="row"><dt>自动化校验</dt><dd>124 rules</dd></div>
+            <div class="row"><dt>功能模块</dt><dd>62</dd></div>
+            <div class="row"><dt>当前版本</dt><dd>v8.48</dd></div>
+            <div class="row"><dt>每交易日运行</dt><dd>15:30</dd></div>
+          </dl>
+          <div class="panel-f">需求定义 · 流程设计 · 结果验收</div>
+        </div>
       </div>
     </div>
 
@@ -504,7 +527,7 @@ img{display:block;max-width:100%}
         <li><b>自建 Skill 库</b><span>沉淀 19 个可复用技能（应用升级、Git 异地备份、雇主核验、浏览器自动化等），把踩过的坑写成下次能直接调用的流程。</span></li>
         <li><b>校招直投工作流</b><span>把「核验雇主 → 匹配岗位 → 定制正文 → 逐封核实投递结果 → 台账入账」沉淀为带红线的可复用流程，并实测了主流招聘平台的自动化接入边界。</span></li>
         <li><b>大学生涯规划台</b><span>纯前端应用，双击即用：190 条任务线、74 项材料清单、61 个资源入口。</span></li>
-        <li><b>个人博客</b><span>已上线运行，含文章管理后台、账号体系与云端图片存储。</span></li>
+        <li><b>系统全景知识地图</b><span>把 60+ 工作目录、在跑系统、已停摆项目与可公开边界整理成可追溯的知识图谱。</span></li>
         <li><b>桌面自动化框架</b><span>「截图 → 识别 → 注入键鼠 → 校验」闭环，用于替代人在图形界面上的重复操作。</span></li>
         <li><b>观点知识库 ×4</b><span>覆盖 4 位财经博主、464 个视频、5,439 条结构化观点（见 Project 02）。</span></li>
       </ul>
@@ -749,13 +772,13 @@ img{display:block;max-width:100%}
       <p>市场营销 / AI 应用 / 商业分析方向，实习与校招均考虑。现居成都，可即刻到岗，接受异地入职。</p>
       <div class="sign-cta">
         <a class="mail" href="mailto:3552922502@qq.com">3552922502@qq.com</a>
-        <a class="btn-dl" href="assets/resume-scott-yi-2026-09.pdf" download>下载简历 PDF</a>
+        <a class="btn-dl" href="assets/resume-yi-chengxi-2026-09.pdf" download>下载简历 PDF</a>
       </div>
       <dl class="sign-dl">
         <div><dt>电话</dt><dd>139-9089-5999</dd></div>
         <div><dt>GitHub</dt><dd><a href="https://github.com/chengxi562-hue" target="_blank" rel="noopener">chengxi562-hue</a></dd></div>
         <div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/chengxi-yi-452460428/" target="_blank" rel="noopener">chengxi-yi</a></dd></div>
-        <div><dt>博客</dt><dd><a href="https://luyu-blog.app.workbuddy.host/" target="_blank" rel="noopener">投资研究笔记</a></dd></div>
+        <div><dt>站点</dt><dd><a href="https://yichengxi.cn/">yichengxi.cn</a></dd></div>
       </dl>
     </div>
   </div>
@@ -766,7 +789,7 @@ img{display:block;max-width:100%}
     <div class="sig" aria-hidden="true">Yi Chengxi</div>
   </div>
   <div class="foot-in">
-    <span>© 2026 弋承熙 Yi Chengxi</span>
+    <span>© 2026 弋承熙 Yi Chengxi · yichengxi.cn</span>
     <span>业务规则由我定义 · 实现交给工具 · 结果由我负责</span>
   </div>
 </footer>
@@ -779,6 +802,9 @@ img{display:block;max-width:100%}
     es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
   },{threshold:.04,rootMargin:'0px 0px -8% 0px'});
   els.forEach(function(e){io.observe(e)});
+  window.setTimeout(function(){
+    els.forEach(function(e){e.classList.add('in');io.unobserve(e)});
+  },1200);
 })();
 </script>
 </body>
