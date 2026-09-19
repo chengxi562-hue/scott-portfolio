@@ -17,6 +17,173 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23171715'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='38' fill='%23F2EFE7'%3EY%3C/text%3E%3C/svg%3E">
 <style>
 /* ==========================================================================
+   v2 设计系统（2026-09-19 全面改版：深色首屏 + 人像 + 粗体中文标题）
+   保留 v1 的类名结构，这里做整体覆盖
+   ========================================================================== */
+:root{
+  --paper:#F5F2EA;
+  --paper-2:#EBE6DA;
+  --ink:#131210;
+  --ink-2:#403C35;
+  --ink-3:#6B655B;
+  --ink-4:#948D80;
+  --rule:#CFC7B8;
+  --rule-soft:#E0DACD;
+  --accent:#C2452F;
+  --accent-soft:#F3DFD9;
+  --dark:#131210;
+  --cream:#F5F2EA;
+  --amber:#DFA247;
+  --display-cn:"PingFang SC","Hiragino Sans GB","Source Han Sans SC","Noto Sans SC","Microsoft YaHei",-apple-system,sans-serif;
+}
+body{background:var(--paper);font-size:15.5px;background-image:none}
+
+/* 顶栏：深色药丸导航 */
+.top{background:var(--dark);border-bottom:0;color:var(--cream)}
+.top-in{height:68px}
+.brand b{font-family:var(--display-cn);font-weight:800;font-size:19px;letter-spacing:.02em;color:var(--cream)}
+.brand span{color:#8E877A}
+.nav a{color:#B9B2A4}
+.nav a:hover{color:var(--cream)}
+.nav a.cta{color:var(--cream);background:var(--accent);padding:8px 16px;border-radius:999px;font-weight:600}
+.nav a.cta::after{display:none}
+.nav a.pill{color:#F0ECE2;background:transparent;border:1px solid rgba(255,255,255,.34);padding:7px 16px;border-radius:999px;font-size:12.5px;margin-right:2px}
+.nav a.pill::after{display:none}
+.nav a.pill:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* 首屏 */
+.hero{background:var(--dark);color:var(--cream);padding:clamp(40px,5vw,76px) 0 0;margin-bottom:0}
+.hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(280px,.62fr);gap:clamp(24px,3.4vw,56px);align-items:end}
+.hero .kicker{color:#A79F90}
+.hero .kicker::before{background:var(--amber)}
+.hero h1{
+  font-family:var(--display-cn);font-weight:800;
+  font-size:clamp(56px,9.4vw,132px);line-height:.92;letter-spacing:-.03em;
+  color:var(--cream);margin:18px 0 0;text-wrap:nowrap;
+}
+.hero-en{
+  font-family:var(--serif-en);font-style:italic;
+  font-size:clamp(20px,2.6vw,34px);line-height:1;color:var(--amber);
+  margin-top:10px;letter-spacing:.01em;
+}
+.hero-role{
+  font-family:var(--display-cn);font-weight:600;
+  font-size:clamp(19px,2.3vw,29px);line-height:1.5;color:#F0ECE2;
+  margin-top:clamp(20px,2.6vw,34px);max-width:20ch;
+}
+.hero-role em{font-style:normal;color:var(--amber)}
+.lede{color:#B4AC9E;font-size:15px;max-width:46ch;margin-top:20px}
+.lede strong{color:#F0ECE2;border-bottom-color:var(--amber)}
+.hero-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
+.hero-chips span{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:#CFC7B8;
+  border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 13px;
+}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn-main,.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:14px;font-weight:600;padding:12px 22px;border-radius:999px;
+}
+.btn-main{background:var(--accent);color:#fff}
+.btn-main:hover{background:#A9381F}
+.btn-ghost{border:1px solid rgba(255,255,255,.28);color:var(--cream)}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.hero-photo{position:relative;align-self:end}
+.hero-photo img{width:100%;height:auto;filter:saturate(.96)}
+.hero-photo::after{
+  content:"2027 届 · 市场营销 × AI";position:absolute;left:0;bottom:8%;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:#8E877A;
+}
+.facts{border-top-color:rgba(255,255,255,.16)}
+.facts div{border-bottom-color:rgba(255,255,255,.12)}
+.facts dt{color:#8E877A}
+.facts dd{color:#E8E3D8}
+.facts dd b{color:var(--amber)}
+
+/* 数字条 */
+.figs{background:var(--dark);border-top:1px solid rgba(255,255,255,.14);border-bottom:0;margin-top:clamp(44px,5vw,72px)}
+.figs-in{border-top:1px solid rgba(255,255,255,.14)}
+.fig{border-right-color:rgba(255,255,255,.12)}
+.fig .v{color:var(--cream)}
+.fig .v small{color:var(--amber)}
+.fig .k{color:#8E877A}
+
+/* 浅色正文区 */
+.sec{padding:clamp(64px,8vw,110px) 0 0}
+.sec-head{border-bottom:1px solid var(--ink);align-items:flex-start;gap:18px}
+.sec-no{font-family:var(--serif-en);font-style:italic;font-size:clamp(40px,5vw,64px);color:var(--accent);line-height:.9}
+.sec-head h2{font-family:var(--display-cn);font-weight:800;font-size:clamp(24px,3.2vw,40px);letter-spacing:-.02em;line-height:1.3;padding-bottom:14px}
+.sec-head .aside{font-family:var(--mono);color:var(--ink-4);padding-bottom:20px}
+.step h3,.case h4,.proj h3,.more-list b{font-family:var(--display-cn);font-weight:700}
+.step h3{font-size:17px}
+.proj h3{font-size:clamp(22px,2.8vw,32px);font-weight:800;letter-spacing:-.02em}
+.blurb{font-size:16px;color:var(--ink-2)}
+.pill{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 11px}
+.metrics .v{font-family:var(--serif-en);font-size:clamp(24px,2.6vw,34px)}
+.case .out{border-left-color:var(--accent)}
+.fail-lead h3{font-family:var(--display-cn);font-weight:800;font-size:clamp(22px,2.8vw,34px);letter-spacing:-.02em}
+.note{background:var(--paper-2);border-left:3px solid var(--accent)}
+.more-list b{font-size:16px}
+.tl-item h4{font-family:var(--display-cn);font-weight:700;font-size:19px}
+
+/* 结尾 */
+.sign{background:var(--dark);color:var(--cream);margin-top:clamp(64px,8vw,110px);padding:clamp(56px,7vw,96px) 0}
+.sign h2{font-family:var(--display-cn);font-weight:800;font-size:clamp(30px,4.4vw,54px);letter-spacing:-.025em;line-height:1.16;color:var(--cream)}
+.sign h2 .hl{color:var(--amber)}
+.sign p{color:#B4AC9E}
+.sign .mail{color:var(--amber)}
+.sign .btn-dl{background:var(--accent);color:#fff;border-radius:999px;padding:11px 20px}
+.sign-dl dt{color:#8E877A}
+.sign-dl dd a{color:#E8E3D8}
+.foot{background:var(--dark);color:#8E877A;border-top:1px solid rgba(255,255,255,.12)}
+.foot .sig{color:rgba(255,255,255,.08)}
+
+/* 响应式（v2 在无层级层，必须自己再声明一遍，否则会盖掉 v1 的 media query） */
+@media(max-width:940px){
+  .hero-grid{grid-template-columns:1fr;gap:clamp(24px,5vw,40px)}
+  .hero-photo{max-width:320px;margin:0 auto}
+  .hero-role{max-width:none}
+}
+@media(max-width:720px){
+  .hero{padding-top:28px}
+  .hero h1{font-size:clamp(46px,16vw,86px)}
+  .hero-role{font-size:19px}
+  .hero-photo{max-width:240px}
+  .facts dt{width:64px}
+  .marquee-track span{font-size:17px}
+  .band img{height:200px}
+  .sec{padding-top:56px}
+  .sec-head{flex-wrap:wrap;gap:10px}
+  .sec-head h2{font-size:clamp(21px,6.4vw,28px)}
+}
+
+/* 关键词跑马灯 */
+.marquee{overflow:hidden;border-top:1px solid rgba(255,255,255,.14);padding:16px 0;margin-top:0}
+.marquee-track{
+  display:flex;align-items:center;gap:18px;width:max-content;
+  animation:marquee 34s linear infinite;
+}
+.marquee-track span{
+  font-family:var(--display-cn);font-weight:700;font-size:clamp(16px,2vw,24px);
+  color:#6F6A5F;white-space:nowrap;letter-spacing:.02em;
+}
+.marquee-track i{color:var(--accent);font-style:normal}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.marquee-track{animation:none}}
+
+/* 方法区配图横幅 */
+.band{position:relative;margin-bottom:clamp(28px,3.4vw,48px);background:var(--ink);overflow:hidden}
+.band img{width:100%;height:clamp(180px,24vw,300px);object-fit:cover;object-position:50% 42%;opacity:.92}
+.band figcaption{
+  position:absolute;left:clamp(18px,2.4vw,32px);right:clamp(18px,2.4vw,32px);bottom:clamp(14px,2vw,24px);
+  color:#F3EFE6;font-size:clamp(13px,1.2vw,15px);line-height:1.6;
+}
+.band figcaption b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-bottom:6px}
+
+/* 以下为 v1 样式，整体降级到 legacy 层：v2 未覆盖的部分继续生效，
+   但同属性的值一律以 v2 为准（CSS 层叠层：无层级样式优先于层级样式）。 */
+@layer legacy{
+/* ==========================================================================
    字体 —— 数字与英文用设计字体，中文用系统宋体/黑体
    ========================================================================== */
 @font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
@@ -310,6 +477,7 @@ img{display:block;max-width:100%}
 .rise{opacity:0;transform:translateY(14px)}
 .rise.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
 @media(prefers-reduced-motion:reduce){.rise{opacity:1;transform:none}}
+} /* end @layer legacy */
 </style>
 </head>
 <body>
@@ -325,7 +493,8 @@ img{display:block;max-width:100%}
       <a href="#intern">实习</a>
       <a href="#campus">校园</a>
       <a href="#edu">教育</a>
-      <a class="cta" href="#contact">联系</a>
+      <a class="pill" href="#contact">联系</a>
+      <a class="cta" href="assets/resume-yi-chengxi-2026-09.pdf" download>下载简历</a>
     </nav>
   </div>
 </header>
@@ -336,36 +505,35 @@ img{display:block;max-width:100%}
     <div class="hero-grid">
       <div>
         <p class="kicker rise">作品集 · 2027 届 · 成都</p>
-        <h1 class="rise">把业务问题，<br>做成<span class="hl">会自己报警</span>的系统。</h1>
+        <h1 class="rise">弋承熙</h1>
+        <p class="hero-en rise">Yi Chengxi</p>
+        <p class="hero-role rise">把业务问题，<br>做成<em>会自己报警</em>的系统。</p>
         <p class="lede rise">
           我不写代码。我定义规则、设计验收标准，并对系统产出的每一条结论负责——
           从金融业务里发现问题，拆成可执行的流程，再用 AI 编程工具实现出来。
           关键是让它<strong>出错时主动喊出来</strong>，而不是静默地交给我一份看起来正常的错误答案。
         </p>
+        <div class="hero-chips rise">
+          <span>市场营销 × AI 应用</span>
+          <span>西南财经大学 × Audencia</span>
+          <span>2027 届 · 本科在读</span>
+          <span>深圳 / 广州</span>
+        </div>
+        <div class="hero-cta rise">
+          <a class="btn-main" href="assets/resume-yi-chengxi-2026-09.pdf" download>下载简历 PDF</a>
+          <a class="btn-ghost" href="#work">看我的项目 →</a>
+        </div>
         <dl class="facts rise">
           <div><dt>求职意向</dt><dd>市场营销 / AI 应用 / 商业分析</dd></div>
-          <div><dt>意向城市</dt><dd><b>深圳</b> · <b>广州</b>（现居成都，可即刻到岗，接受异地入职）</dd></div>
-          <div><dt>学历</dt><dd>西南财经大学 × 法国南特高等商学院 · 2027 届</dd></div>
+          <div><dt>到岗安排</dt><dd>9 月 22 日起可到岗，每周 4-5 天，可实习 4 个月以上</dd></div>
+          <div><dt>联系方式</dt><dd>3552922502@qq.com · 139-9089-5999</dd></div>
         </dl>
       </div>
 
       <div class="hero-right">
-        <figure class="hero-art rise">
-          <img src="assets/system-desk.png" width="1024" height="1024" alt="系统工作台概念插画：行情、流程节点与代码三块屏幕，上方有故障警示标识">
-          <figcaption><span>field note 01</span><br>系统真正的价值，不是自动跑，而是在出错时主动喊出来。</figcaption>
+        <figure class="hero-photo rise">
+          <img src="assets/portrait-hero.png" width="658" height="1075" alt="弋承熙的双色调人像剪影">
         </figure>
-        <div class="panel rise">
-          <div class="panel-h"><span>system · 投研管线</span><i class="dot"></i></div>
-          <dl class="panel-b">
-            <div class="row"><dt>数据管线</dt><dd>18 phases</dd></div>
-            <div class="row"><dt>自动化校验</dt><dd>124 rules</dd></div>
-            <div class="row"><dt>功能模块</dt><dd>62</dd></div>
-            <div class="row"><dt>当前版本</dt><dd>v8.48</dd></div>
-            <div class="row"><dt>最近校验</dt><dd>09-19 · 124/124</dd></div>
-            <div class="row"><dt>每交易日运行</dt><dd>15:30</dd></div>
-          </dl>
-          <div class="panel-f">需求定义 · 流程设计 · 结果验收</div>
-        </div>
       </div>
     </div>
 
@@ -379,6 +547,17 @@ img{display:block;max-width:100%}
         <div class="fig"><div class="v">204.5<small>h</small></div><div class="k">志愿服务</div></div>
       </div>
     </div>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>需求定义</span><i>·</i><span>流程设计</span><i>·</i><span>结果验收</span><i>·</i>
+        <span>数据管线</span><i>·</i><span>自动化校验</span><i>·</i><span>故障自曝</span><i>·</i>
+        <span>市场营销</span><i>·</i><span>AI 应用</span><i>·</i><span>商业分析</span><i>·</i>
+        <span>需求定义</span><i>·</i><span>流程设计</span><i>·</i><span>结果验收</span><i>·</i>
+        <span>数据管线</span><i>·</i><span>自动化校验</span><i>·</i><span>故障自曝</span><i>·</i>
+        <span>市场营销</span><i>·</i><span>AI 应用</span><i>·</i><span>商业分析</span><i>·</i>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -390,6 +569,11 @@ img{display:block;max-width:100%}
       <h2>先定义「什么算做对了」，再动手</h2>
       <span class="aside">method</span>
     </div>
+
+    <figure class="band rise">
+      <img src="assets/system-desk.png" width="1024" height="1024" alt="系统工作台概念插画：行情、流程节点与代码三块屏幕，上方有故障警示标识">
+      <figcaption><b>field note 01</b> 系统真正的价值，不是自动跑，而是在出错时主动喊出来。</figcaption>
+    </figure>
 
     <div class="steps rise">
       <div class="step">
