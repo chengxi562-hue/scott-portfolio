@@ -1,5 +1,6 @@
 import { normalizeBrief, buildBrief } from './core.mjs';
 import { MAX_DRAFT_BYTES, serializeDraft, parseDraft } from './draft.mjs';
+import { buildWorkflow, serializeWorkflow } from './workflow.mjs';
 
 const STORAGE_KEY = 'task-brief-v1';
 const FIELDS = ['type', 'goal', 'materials', 'facts', 'constraints', 'deliverable', 'acceptance', 'unknowns'];
@@ -62,6 +63,68 @@ ready(() => {
   const downloadDraft = document.getElementById('downloadDraft');
   const importDraft = document.getElementById('importDraft');
   const draftStatus = document.getElementById('draftStatus');
+  const workflowStatus = document.getElementById('workflowStatus');
+  const workflowPreview = document.getElementById('workflowPreview');
+  const workflowDownload = document.getElementById('downloadWorkflow');
+  let workflowText = '';
+
+  function invalidateWorkflow() {
+    workflowText = '';
+    workflowDownload.disabled = true;
+    workflowPreview.replaceChildren();
+    workflowStatus.textContent = '使用当前任务信息生成计划。';
+  }
+
+  function locateError() {
+    for (const name of FIELDS) {
+      const el = form.elements[name];
+      el.removeAttribute('aria-invalid');
+      el.removeAttribute('aria-describedby');
+    }
+    const name = ['goal', 'deliverable', 'acceptance'].find(key => !form.elements[key].value.trim()) || FIELDS.find(key => form.elements[key].maxLength > 0 && form.elements[key].value.length > form.elements[key].maxLength);
+    if (name) {
+      form.elements[name].setAttribute('aria-invalid', 'true');
+      form.elements[name].setAttribute('aria-describedby', 'status');
+      form.elements[name].focus();
+    }
+  }
+
+  document.getElementById('previewWorkflow').addEventListener('click', () => {
+    invalidateWorkflow();
+    try {
+      const plan = buildWorkflow(readForm(), {id: document.getElementById('workflowId').value, strategy: document.getElementById('workflowStrategy').value});
+      workflowText = serializeWorkflow(plan);
+      for (const [index, task] of plan.tasks.entries()) {
+        const li = document.createElement('li');
+        const title = document.createElement('strong');
+        title.textContent = `${String(index + 1).padStart(2, '0')} / ${plan.tasks.length === 3 ? ['制定计划', '完成初稿', '审阅产物'][index] : task.title}`;
+        const detail = document.createElement('p');
+        detail.textContent = (task.depends_on.length ? '前一步完成后执行。' : '流程起点。') + (task.acceptance === 'manual' ? '完成后检查产物，再确认采纳。' : '阶段标记只确认输出结构，不证明内容正确。');
+        li.append(title, detail);
+        workflowPreview.append(li);
+      }
+      workflowDownload.disabled = false;
+      workflowStatus.textContent = `已设计 ${plan.tasks.length} 个步骤；没有发出模型请求。`;
+    } catch (error) {
+      workflowStatus.textContent = error.message;
+      setStatus(error.message);
+      locateError();
+      const idInput = document.getElementById('workflowId');
+      if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,44}$/.test(idInput.value)) {
+        idInput.setAttribute('aria-invalid', 'true');
+        idInput.focus();
+      }
+    }
+  });
+  for (const id of ['workflowId', 'workflowStrategy']) document.getElementById(id).addEventListener('input', event => {
+    event.target.removeAttribute('aria-invalid');
+    invalidateWorkflow();
+  });
+  workflowDownload.addEventListener('click', () => {
+    if (!workflowText) return;
+    downloadFile(workflowText, 'tongzhou-workflow.json', 'application/json;charset=utf-8');
+    workflowStatus.textContent = '任务包已开始下载；审阅后交给自己的本地环境执行。';
+  });
 
   let memoryOnly = false;
   let saveIssue = "";
@@ -83,7 +146,7 @@ ready(() => {
   function writeForm(data) {
     for (const name of FIELDS) {
       const el = form.elements[name];
-      if (el && typeof data[name] === 'string') el.value = data[name];
+      if (el && typeof data[name] === 'string') { el.value = data[name]; el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); }
     }
   }
 
@@ -93,6 +156,7 @@ ready(() => {
   }
 
   function invalidateOutputs() {
+    invalidateWorkflow();
     outExecute.value = '';
     outReview.value = '';
     copyExecute.disabled = true;
@@ -198,6 +262,7 @@ ready(() => {
       brief = normalizeBrief(readForm());
     } catch (err) {
       setStatus(err && err.message ? err.message : '输入不符合要求，请检查后重试。');
+      locateError();
       return;
     }
     let executeMd;
@@ -301,15 +366,14 @@ ready(() => {
   function initTheme() {
     let saved = null;
     try {
-      saved = localStorage.getItem('task-brief-theme');
+      saved = localStorage.getItem('site-theme') || localStorage.getItem('task-brief-theme');
     } catch (err) {
       saved = null;
     }
     if (saved === 'dark' || saved === 'light') {
       applyTheme(saved);
     } else {
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      applyTheme(prefersDark ? 'dark' : 'light');
+      applyTheme('light');
     }
   }
 
@@ -317,13 +381,14 @@ ready(() => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     applyTheme(next);
     try {
-      localStorage.setItem('task-brief-theme', next);
+      localStorage.setItem('site-theme', next);
     } catch (err) { /* ignore */ }
   });
 
   form.addEventListener('submit', generate);
 
   form.addEventListener('input', () => {
+    for (const name of FIELDS) form.elements[name].removeAttribute('aria-invalid');
     invalidateOutputs();
     if (dirtyFromRestore) dirtyFromRestore = false;
     persist();

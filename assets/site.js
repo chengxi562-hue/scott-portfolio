@@ -31,6 +31,7 @@
     $$('[data-project]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.project === project)));
     $$('[data-step]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === step)));
     $('#share-status').textContent = '';
+    $('#share-status').parentElement.querySelector('.copy-fallback')?.remove();
   }
   function changeLanguage(next) {
     language = next === 'en' ? 'en' : 'zh';
@@ -77,8 +78,15 @@
   $$('.case-link').forEach(link => link.addEventListener('click', event => { event.preventDefault(); setCase(link.closest('.card').id, 0); $('.case-explorer').scrollIntoView({behavior:'instant', block:'start'}); $('#case-heading').focus({preventScroll:true}); }));
   addEventListener('hashchange', fromHash); fromHash();
   async function copy(value, status, success) {
+    status.parentElement.querySelector('.copy-fallback')?.remove();
     try { await navigator.clipboard.writeText(value); status.textContent = success; }
-    catch (_) { status.textContent = text('复制未成功，请手动复制。', 'Could not copy. Please copy manually.'); }
+    catch (_) {
+      status.textContent = text('已选中内容，请手动复制。', 'Text selected. Please copy manually.');
+      const field = document.createElement('input');
+      field.className = 'copy-fallback'; field.readOnly = true; field.value = value;
+      field.setAttribute('aria-label', text('待复制内容', 'Text to copy'));
+      status.after(field); field.focus(); field.select();
+    }
   }
   $('#share-case').addEventListener('click', () => {
     const url = new URL(location.href); url.hash = 'case-' + project + '-' + step; url.searchParams.set('lang', language);

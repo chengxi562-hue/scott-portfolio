@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>同舟 · AI 协作 — 把协作写清楚，让交付有据可查 | 项目案例</title>
+<meta name="description" content="同舟 · AI 协作：一个把任务、依赖与验收写清楚的本地协作实践。公开版生成任务文本、依赖预览与 JSON，不请求模型；本地版利用既有环境执行队列。">
+<link rel="canonical" href="https://yichengxi.cn/projects/tongzhou/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="同舟 · AI 协作 — 把协作写清楚，让交付有据可查">
+<meta property="og:description" content="一个把任务、依赖与验收写清楚的本地协作实践。公开版生成任务文本、依赖预览与 JSON；本地版利用既有环境执行队列。">
+<meta property="og:image" content="https://yichengxi.cn/assets/yi-chengxi-illustrated.jpg">
+<meta property="og:url" content="https://yichengxi.cn/projects/tongzhou/">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="stylesheet" href="case.css">
+</head>
+<body>
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<header class="site-header">
+  <nav class="nav" aria-label="主导航">
+    <a class="nav-home" href="../../">首页</a>
+    <span class="nav-sep" aria-hidden="true">/</span>
+    <span class="nav-current" aria-current="page">同舟 · AI 协作</span>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false">深色模式</button>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-labelledby="page-title">
+    <p class="kicker">项目案例 · 个人实践图册</p>
+    <h1 id="page-title">同舟 · AI 协作</h1>
+    <p class="lede">把协作写清楚，让交付有据可查。</p>
+    <p class="hero-note">一个把任务、依赖与验收写清楚的本地协作实践：公开版负责把计划写明白，本地版在既有环境里按队列执行。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="../../tools/task-brief/">打开协作计划设计器</a>
+      <a class="btn btn-secondary" href="#local">阅读本地版说明</a>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-problem">
+    <h2 id="sec-problem">问题</h2>
+    <div class="prose">
+      <p>同时使用多个 AI 工具时，任务与交付之间的边界容易失去联系：一个任务交给了谁、依赖哪一步的产物、验收标准是什么，往往只存在于对话记录里，事后难以核对。</p>
+      <p>这个项目尝试用一份写得清楚的协作计划来解决：任务有定义，依赖有顺序，验收有记录。角色分工如下——</p>
+      <blockquote class="quote">
+        <p>“我负责需求定义、流程设计与结果验收；AI 工具参与实现，问题通过实际产物和独立检查发现与修正。”</p>
+      </blockquote>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-flow">
+    <h2 id="sec-flow">流程示意</h2>
+    <p class="section-note">三个步骤依次相连：每一步的产物是下一步的输入。</p>
+    <ol class="flow" role="list">
+      <li class="flow-step">
+        <div class="flow-card">
+          <span class="flow-num" aria-hidden="true">01</span>
+          <h3>明确任务</h3>
+          <p>把需求写成任务单：目标、边界、依赖关系与验收标准，在动手之前先写清楚。</p>
+        </div>
+      </li>
+      <li class="flow-connector" aria-hidden="true">
+        <svg viewBox="0 0 48 24" width="48" height="24" focusable="false" aria-hidden="true"><path d="M2 12 H40 M34 6 L42 12 L34 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </li>
+      <li class="flow-step">
+        <div class="flow-card">
+          <span class="flow-num" aria-hidden="true">02</span>
+          <h3>执行任务</h3>
+          <p>按队列与依赖顺序执行，产出可核对的实际产物，并记录产物哈希用于验收。</p>
+        </div>
+      </li>
+      <li class="flow-connector" aria-hidden="true">
+        <svg viewBox="0 0 48 24" width="48" height="24" focusable="false" aria-hidden="true"><path d="M2 12 H40 M34 6 L42 12 L34 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </li>
+      <li class="flow-step">
+        <div class="flow-card">
+          <span class="flow-num" aria-hidden="true">03</span>
+          <h3>检查验收</h3>
+          <p>对照任务单验收：独立测试、复核记录与产物哈希，留下有日期的证据。</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-record">
+    <h2 id="sec-record">验收记录</h2>
+    <p class="section-note">以下是有日期的工程检查记录。这是工程检查，不是商业成效或省额度统计；没有节省百分比的证据。</p>
+    <div class="table-wrap">
+      <table class="record-table">
+        <caption>2026-09-20 验收记录（工程检查，非实时数据）</caption>
+        <thead>
+          <tr>
+            <th scope="col">日期</th>
+            <th scope="col">项目</th>
+            <th scope="col">结果</th>
+            <th scope="col">说明与限制</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-09-20</td>
+            <td>独立调度测试</td>
+            <td>127 项通过</td>
+            <td>覆盖队列、会员路由、持久状态、任务依赖、取消、有限重试、失败停派、产物哈希验收。</td>
+          </tr>
+          <tr>
+            <td>2026-09-20</td>
+            <td>既有 worker 回归</td>
+            <td>11 项通过</td>
+            <td>确认新调度不破坏既有 worker 行为。</td>
+          </tr>
+          <tr>
+            <td>2026-09-20</td>
+            <td>真实链路</td>
+            <td>跑通</td>
+            <td>真实“计划 → 初稿 → 复核”链完整执行一次。</td>
+          </tr>
+          <tr>
+            <td>2026-09-20</td>
+            <td>真实代码产物</td>
+            <td>另经 5 项独立行为测试</td>
+            <td>对产物本身的行为做独立验证，而非仅看执行日志。</td>
+          </tr>
+          <tr>
+            <td>2026-09-20</td>
+            <td>已验证组合</td>
+            <td>Kimi 文本与代码；WorkBuddy 短复核；Claude Code + Kimi 基础代码</td>
+            <td>其他提供方未全面验证，不作推广性结论。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-note">本页为静态记录，不是实时仪表盘；数据不会随时间自动更新。</p>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-compare">
+    <h2 id="sec-compare">公开版与本地版</h2>
+    <div class="table-wrap">
+      <table class="compare-table">
+        <caption>公开版与本地版能力比较</caption>
+        <thead>
+          <tr>
+            <th scope="col">能力</th>
+            <th scope="col">公开版（本页工具）</th>
+            <th scope="col">本地版</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">任务文本</th>
+            <td>生成结构化的任务说明文本</td>
+            <td>读取同一份任务定义</td>
+          </tr>
+          <tr>
+            <th scope="row">依赖预览</th>
+            <td>可视化任务之间的依赖顺序</td>
+            <td>按依赖顺序调度执行</td>
+          </tr>
+          <tr>
+            <th scope="row">JSON 导出</th>
+            <td>导出完整计划 JSON，供审阅与复用</td>
+            <td>消费该 JSON 作为执行输入</td>
+          </tr>
+          <tr>
+            <th scope="row">模型请求</th>
+            <td>不请求任何模型，纯本地生成</td>
+            <td>利用既有环境与会员路由执行队列</td>
+          </tr>
+          <tr>
+            <th scope="row">凭证与隐私</th>
+            <td>不接触任何凭证</td>
+            <td>个人会员凭证、私人任务和控制接口留在本地，不进入公开页面</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" id="local" aria-labelledby="sec-local">
+    <h2 id="sec-local">本地使用说明</h2>
+    <div class="prose">
+      <ol class="steps">
+        <li>先用公开版生成计划，<strong>审阅导出的 JSON</strong>，确认任务、依赖与验收标准符合预期。</li>
+        <li>再把 JSON 交给<strong>你自己的本地执行环境</strong>。本地版需要你自己的执行器与凭证，本页不提供。</li>
+        <li>没有执行环境时，也可以把计划当作 Markdown 任务单，交给任意 AI 工具逐条执行。</li>
+      </ol>
+      <p>本页不安装、不连接、不执行任何东西。公开版只在你的浏览器里生成文本与 JSON。</p>
+
+      <h3>边界与已知限制</h3>
+      <ul class="limits">
+        <li>每个任务总共最多 2 次尝试——是“总共 2 次尝试”，不是“2 次重试”。失败后不会无期限自动重试。</li>
+        <li>模型复核不等于事实证明；复核意见需要与实际产物和独立检查相互印证。</li>
+        <li>自动检查只覆盖指定验收约定中写明的范围，约定之外的行为不作保证。</li>
+        <li>Claude Code 接入 Kimi 已通过基础代码小样；Desktop 界面和长任务尚未全面验证。</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section cta" aria-labelledby="sec-cta">
+    <h2 id="sec-cta">亲手写一份协作计划</h2>
+    <p class="section-note">从明确任务开始，把依赖与验收写清楚。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="../../tools/task-brief/">打开协作计划设计器</a>
+    </div>
+    <p class="source-link">
+      工具源码：
+      <a href="https://github.com/chengxi562-hue/scott-portfolio/tree/main/tools/task-brief" rel="noopener">github.com/chengxi562-hue/scott-portfolio · tools/task-brief</a>
+    </p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p><a href="../../">返回首页</a></p>
+  <p class="footer-date">记录日期：2026-09-20</p>
+</footer>
+
+<script src="case.js"></script>
+</body>
+</html>
