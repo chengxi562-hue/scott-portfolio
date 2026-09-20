@@ -1,5 +1,5 @@
 /* 同舟 · AI 协作 — 项目案例页 */
-/* 暖纸 #f7f4ec / 墨 #21211e / 档案红 #a0442a（对齐整站研究档案方向） */
+/* 暖纸 #f4f2e9 / 森林绿 #234a3c / 赭红 #b9603d */
 
 @font-face {
   font-family: "Instrument Serif";
@@ -18,24 +18,24 @@
 }
 
 :root {
-  --paper: #f7f4ec;
-  --forest: #21211e;
-  --ochre: #a0442a;
-  --ink: #21211e;
-  --ink-soft: rgba(33, 33, 30, 0.78);
-  --line: rgba(33, 33, 30, 0.28);
+  --paper: #f4f2e9;
+  --forest: #234a3c;
+  --ochre: #a8542f;
+  --ink: #234a3c;
+  --ink-soft: rgba(35, 74, 60, 0.78);
+  --line: rgba(35, 74, 60, 0.28);
   --card: rgba(255, 255, 255, 0.42);
   --serif: "Instrument Serif", "Songti SC", "Noto Serif CJK SC", serif;
   --sans: "Instrument Sans", "PingFang SC", "Noto Sans CJK SC", system-ui, sans-serif;
 }
 
 html[data-theme="dark"] {
-  --paper: #101d18;
-  --forest: #ece7d6;
-  --ochre: #e29a75;
-  --ink: #ece7d6;
-  --ink-soft: rgba(236, 231, 214, 0.78);
-  --line: rgba(236, 231, 214, 0.3);
+  --paper: #1d2b25;
+  --forest: #e8e4d6;
+  --ochre: #d08a6b;
+  --ink: #e8e4d6;
+  --ink-soft: rgba(232, 228, 214, 0.78);
+  --line: rgba(232, 228, 214, 0.3);
   --card: rgba(244, 242, 233, 0.06);
 }
 
@@ -72,7 +72,7 @@ body {
   background: var(--forest);
   color: var(--paper);
   text-decoration: none;
-  border-radius: 0;
+  border-radius: 2px;
   transition: top 0.15s ease;
 }
 
@@ -85,7 +85,7 @@ a:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--ochre);
   outline-offset: 3px;
-  border-radius: 0;
+  border-radius: 2px;
 }
 
 /* 头部导航 */
@@ -132,7 +132,7 @@ button:focus-visible {
   background: transparent;
   color: var(--ink);
   border: 1px solid var(--line);
-  border-radius: 0;
+  border-radius: 999px;
   cursor: pointer;
 }
 
@@ -195,7 +195,7 @@ h1 {
   display: inline-block;
   font-size: 0.95rem;
   padding: 0.75rem 1.5rem;
-  border-radius: 0;
+  border-radius: 2px;
   text-decoration: none;
   border: 1px solid var(--forest);
   transition: background 0.15s ease, color 0.15s ease;
@@ -212,7 +212,7 @@ h1 {
 }
 
 html[data-theme="dark"] .btn-primary {
-  color: #101d18;
+  color: #1d2b25;
 }
 
 .btn-secondary {
@@ -301,7 +301,7 @@ h3 {
   padding: 1.5rem 1.35rem;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 0;
+  border-radius: 3px;
 }
 
 .flow-num {
