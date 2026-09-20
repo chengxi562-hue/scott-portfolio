@@ -26,6 +26,8 @@
 
 ## 历史设计（已被当前实现替代）
 
+2026-09-20 晚的研究档案改版（方向 B，`4db3a71`）上线后经用户验收不满意，同日全量回滚（`e225f45`）；四方向样稿、审批与验证记录保留在本地 `_dev/design-evolution-20260920/` 与 Git 历史，不作为当前设计。视觉重做按用户决定暂停。
+
 2026-09-19 曾评估静物主视觉、CSS 3D 三层工作台、视角调整和模拟输入。当前页面已移除这些交互；旧素材、原型和验证记录保留在原位置及 Git 历史，不作为功能清单。
 
 设计曾参考 [Brittany Chiang](https://brittanychiang.com/) 的内容层次和 [Astro Bento Portfolio](https://github.com/Ladvace/astro-bento-portfolio) 的交互组织，没有导入模板代码。未使用 CAD、Blender 或 Three.js；没有为原型增加 WebGL 或 Next.js 构建依赖。
