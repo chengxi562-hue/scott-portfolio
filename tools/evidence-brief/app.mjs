@@ -79,7 +79,7 @@ $('#handoff').addEventListener('click',async()=>output('交给 AI 的复核任�
 $('#close-output').addEventListener('click',async()=>$('#output-dialog').close());$('#output-dialog').addEventListener('close',()=>opener?.focus());
 $('#copy-output').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('#output-text').value);$('#copy-state').textContent='已复制。';}catch(_){$('#copy-state').textContent='无法自动复制，请选中文本手动复制。';$('#output-text').focus();$('#output-text').select();}});
 function applyTheme(theme){const dark=theme==='dark';document.documentElement.dataset.theme=dark?'dark':'light';$('#theme').textContent=dark?'浅色':'深色';$('#theme').setAttribute('aria-pressed',String(dark));}
-try { applyTheme(localStorage.getItem('site-theme')); } catch (_) { applyTheme('light'); }
+applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 $('#theme').addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';applyTheme(theme);try{localStorage.setItem('site-theme',theme);}catch(_){}});
 try{const stored=sessionStorage.getItem(KEY);if(stored){state=validateWorkspace(JSON.parse(stored));selected=state.claims[0]?.id||null;saveStatus='已恢复本标签页的资料 · 请导出 JSON 备份。';}}catch(_){notify('已有浏览器记录无法读取。尚未覆盖；请勿把此状态当作保存成功。');}
 render();

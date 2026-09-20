@@ -31,7 +31,14 @@
   }
 
   function currentTheme() {
-    return readStoredTheme() || "light";
+    var stored = readStoredTheme();
+    if (stored) {
+      return stored;
+    }
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+    return "light";
   }
 
   function applyTheme(theme) {
