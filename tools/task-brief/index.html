@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>协作任务单 · Task Brief — 把需求交接清楚</title>
+<meta name="description" content="免费生成给 AI 执行者和复核者的任务单，明确目标、材料、限制、交付与验收。浏览器内处理，无需账号或 API Key。">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="stylesheet" href="../evidence-brief/app.css?v=0.1.0">
+<link rel="stylesheet" href="app.css?v=20260920">
+</head>
+<body>
+<a class="skip" href="#workspace">跳到任务表单</a>
+<header class="header">
+  <a class="brand" href="../../">弋承熙 <span>PROJECTS / 02</span></a>
+  <button id="themeToggle" type="button" aria-pressed="false">切换深浅色</button>
+</header>
+<main class="main">
+  <section class="intro">
+    <div>
+      <p class="eyebrow">A CLEARER HANDOFF FOR AI WORK</p>
+      <h1>协作任务单<span>Task Brief</span></h1>
+      <p class="lead">把需求交清楚，<em>把结果验明白。</em></p>
+      <p>填写下方表单，一次生成「执行版」与「复核版」两份 Markdown 任务单，可复制或下载。所有内容仅保存在当前浏览器，不会发送到任何服务器或 AI 服务。</p>
+    </div>
+    <aside class="intro-aside">
+      <p class="small">先说明目标与材料，再约定交付和验收。这里生成任务文本，不会替你调用模型。关闭标签页可能丢失资料；请下载留存，不要填写密码、密钥或不可分享的材料。</p>
+      <p class="small"><a href="https://github.com/chengxi562-hue/scott-portfolio/tree/main/tools/task-brief">查看源码</a></p>
+    </aside>
+  </section>
+
+  <section class="workspace" id="workspace" aria-label="协作任务单工作区">
+    <div class="workspace-bar">
+      <h2>任务信息</h2>
+      <div class="toolbar">
+        <button type="button" class="small" data-example="research">示例：营销竞品研究</button>
+        <button type="button" class="small" data-example="writing">示例：AI 文章结构</button>
+        <button type="button" class="small" data-example="code">示例：网页交互修复</button>
+        <button type="button" class="small" id="clearBtn">清空表单</button>
+      </div>
+    </div>
+
+    <form id="briefForm" class="task-form" novalidate>
+      <div class="field-grid">
+        <label>任务类型（必填）
+          <select id="type" name="type" required>
+            <option value="research">研究</option>
+            <option value="writing">写作</option>
+            <option value="code">代码</option>
+          </select>
+        </label>
+        <label>目标（必填，≤1000 字）
+          <textarea id="goal" name="goal" rows="4" required maxlength="1000" placeholder="希望对方达成什么结果？"></textarea>
+        </label>
+        <label>可分享的材料摘要（≤4000 字）
+          <textarea id="materials" name="materials" rows="4" maxlength="4000" placeholder="相关链接、文档、代码片段等"></textarea>
+        </label>
+        <label>已确认事实（≤4000 字）
+          <textarea id="facts" name="facts" rows="4" maxlength="4000" placeholder="已确认的事实与数据"></textarea>
+        </label>
+        <label>限制与禁止事项（≤4000 字）
+          <textarea id="constraints" name="constraints" rows="4" maxlength="4000" placeholder="时间、预算、技术栈、风格等限制"></textarea>
+        </label>
+        <label>交付格式（必填，≤4000 字）
+          <textarea id="deliverable" name="deliverable" rows="4" required maxlength="4000" placeholder="最终需要交付什么？格式与范围？"></textarea>
+        </label>
+        <label>验收标准（必填，≤4000 字）
+          <textarea id="acceptance" name="acceptance" rows="4" required maxlength="4000" placeholder="怎样算完成？可检查的标准"></textarea>
+        </label>
+        <label>未知项（≤4000 字）
+          <textarea id="unknowns" name="unknowns" rows="4" maxlength="4000" placeholder="尚不确定、需要对方确认的问题"></textarea>
+        </label>
+      </div>
+      <div class="toolbar">
+        <button type="submit" class="primary" id="generateBtn">生成任务单</button>
+      </div>
+    </form>
+
+    <div class="task-output">
+    <p id="status" class="notice" role="status"></p>
+
+    <div class="workspace-bar">
+      <h2>输出预览</h2>
+    </div>
+    <div class="field-grid">
+      <label>给执行者的任务单
+        <textarea id="outExecute" rows="12" readonly placeholder="点击「生成任务单」后在此预览"></textarea>
+      </label>
+      <label>给复核者的核对单
+        <textarea id="outReview" rows="12" readonly placeholder="点击「生成任务单」后在此预览"></textarea>
+      </label>
+    </div>
+    <div class="toolbar">
+      <button type="button" class="small" id="copyExecute" disabled>复制执行版</button>
+      <button type="button" class="small" id="downloadExecute" disabled>下载执行版 Markdown</button>
+      <button type="button" class="small" id="copyReview" disabled>复制复核版</button>
+      <button type="button" class="small" id="downloadReview" disabled>下载复核版 Markdown</button>
+    </div>
+
+    <div class="task-note">
+      <p>三个示例均为合成演示。输入仅暂存在本标签页；需要交给 AI 时，请先检查，再由你主动复制。本文本不会自动执行任务，也不能保证其他 AI 遵守全部要求。</p>
+    </div>
+    </div>
+  </section>
+  <footer class="page-footer"><a href="../../">← 回到个人网站</a> · <a href="../evidence-brief/">用循据整理研究证据 ↗</a></footer>
+</main>
+
+<dialog id="confirmDialog">
+  <form method="dialog">
+    <p id="confirmText">当前表单已有内容，确定要替换吗？</p>
+    <div class="toolbar">
+      <button type="submit" value="cancel" id="confirmCancel">取消</button>
+      <button type="submit" value="ok" class="primary" id="confirmOk">确定</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="./app.mjs?v=20260920"></script>
+</body>
+</html>
