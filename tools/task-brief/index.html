@@ -3,13 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<script>try{var s=localStorage.getItem('site-theme');if(s!=='light'&&s!=='dark'){s=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=s;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=s==='dark'?'#101d18':'#f4f2e9'}catch(e){}</script>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XC9YybYJFX9Bv+Zy7uCEr3wGwmN+CqwdKy39NqUFs1A='; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>协作计划设计器 · Task Brief — 从任务到验收</title>
 <link rel="canonical" href="https://yichengxi.cn/tools/task-brief/">
+<meta property="og:type" content="website">
 <meta property="og:title" content="协作计划设计器 · Task Brief">
 <meta property="og:description" content="明确任务、材料与验收，预览协作步骤，带走 Markdown 或本地任务包。">
 <meta property="og:url" content="https://yichengxi.cn/tools/task-brief/">
 <meta property="og:image" content="https://yichengxi.cn/assets/yi-chengxi-illustrated.jpg">
+<meta property="og:image:width" content="1122">
+<meta property="og:image:height" content="1402">
+<meta name="twitter:card" content="summary">
 <meta name="description" content="免费生成给 AI 执行者和复核者的任务单，明确目标、材料、限制、交付与验收。浏览器内处理，无需账号或 API Key。">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="../../assets/favicon.svg">
@@ -149,6 +154,6 @@
   </form>
 </dialog>
 
-<script type="module" src="./app.mjs?v=20260920-workflow"></script>
+<script type="module" src="./app.mjs?v=20260920-opt1"></script>
 </body>
 </html>

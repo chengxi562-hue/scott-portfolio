@@ -373,7 +373,7 @@ ready(() => {
     if (saved === 'dark' || saved === 'light') {
       applyTheme(saved);
     } else {
-      applyTheme('light');
+      applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
     }
   }
 
