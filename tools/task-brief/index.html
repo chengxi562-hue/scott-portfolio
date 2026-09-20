@@ -9,7 +9,7 @@
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="../../assets/favicon.svg">
 <link rel="stylesheet" href="../evidence-brief/app.css?v=0.1.0">
-<link rel="stylesheet" href="app.css?v=20260920">
+<link rel="stylesheet" href="app.css?v=20260920-draft">
 </head>
 <body>
 <a class="skip" href="#workspace">跳到任务表单</a>
@@ -26,7 +26,7 @@
       <p>填写下方表单，一次生成「执行版」与「复核版」两份 Markdown 任务单，可复制或下载。所有内容仅保存在当前浏览器，不会发送到任何服务器或 AI 服务。</p>
     </div>
     <aside class="intro-aside">
-      <p class="small">先说明目标与材料，再约定交付和验收。这里生成任务文本，不会替你调用模型。关闭标签页可能丢失资料；请下载留存，不要填写密码、密钥或不可分享的材料。</p>
+      <p class="small">先说明目标与材料，再约定交付和验收。这里生成任务文本，不会替你调用模型。关闭标签页可能丢失资料；离开前下载草稿，下次导入继续。不要填写密码、密钥或不可分享的材料。</p>
       <p class="small"><a href="https://github.com/chengxi562-hue/scott-portfolio/tree/main/tools/task-brief">查看源码</a></p>
     </aside>
   </section>
@@ -40,6 +40,19 @@
         <button type="button" class="small" data-example="code">示例：网页交互修复</button>
         <button type="button" class="small" id="clearBtn">清空表单</button>
       </div>
+    </div>
+
+    <div class="draft-bar">
+      <div>
+        <strong>留住这次任务，下次接着写。</strong>
+        <p>未填完也能下载草稿；导入只在浏览器内读取，不上传文件。</p>
+      </div>
+      <div class="toolbar">
+        <button type="button" id="downloadDraft">下载草稿</button>
+        <label class="file-button">导入草稿<input type="file" id="importDraft" accept=".json,application/json" aria-label="导入草稿" aria-describedby="draftHint"></label>
+      </div>
+      <p id="draftHint" class="draft-hint">草稿为本工具的 JSON 文件，最多 128 KB。Markdown 用于交接阅读；JSON 用于恢复填写。</p>
+      <p id="draftStatus" class="draft-status" role="status"></p>
     </div>
 
     <form id="briefForm" class="task-form" novalidate>
@@ -100,7 +113,7 @@
     </div>
 
     <div class="task-note">
-      <p>三个示例均为合成演示。输入仅暂存在本标签页；需要交给 AI 时，请先检查，再由你主动复制。本文本不会自动执行任务，也不能保证其他 AI 遵守全部要求。</p>
+      <p>三个示例均为合成演示。输入仅暂存在本标签页；下载草稿后可再次导入继续填写。需要交给 AI 时，请先检查材料是否可以分享，再由你主动复制。本文本不会自动执行任务，也不能保证其他 AI 遵守全部要求。</p>
     </div>
     </div>
   </section>
@@ -117,6 +130,6 @@
   </form>
 </dialog>
 
-<script type="module" src="./app.mjs?v=20260920"></script>
+<script type="module" src="./app.mjs?v=20260920-draft"></script>
 </body>
 </html>

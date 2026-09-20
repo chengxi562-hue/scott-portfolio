@@ -1,4 +1,5 @@
 import { normalizeBrief, buildBrief } from './core.mjs';
+import { MAX_DRAFT_BYTES, serializeDraft, parseDraft } from './draft.mjs';
 
 const STORAGE_KEY = 'task-brief-v1';
 const FIELDS = ['type', 'goal', 'materials', 'facts', 'constraints', 'deliverable', 'acceptance', 'unknowns'];
@@ -58,6 +59,9 @@ ready(() => {
   const confirmText = document.getElementById('confirmText');
   const confirmCancel = document.getElementById('confirmCancel');
   const themeToggle = document.getElementById('themeToggle');
+  const downloadDraft = document.getElementById('downloadDraft');
+  const importDraft = document.getElementById('importDraft');
+  const draftStatus = document.getElementById('draftStatus');
 
   let memoryOnly = false;
   let saveIssue = "";
@@ -105,7 +109,7 @@ ready(() => {
       saveIssue = "";
     } catch (err) {
       memoryOnly = true;
-      saveIssue = '标签页保存失败，输入仍在当前页面；请检查长度限制，生成后下载留存。';
+      saveIssue = '标签页保存失败，输入仍在当前页面；请检查长度限制并下载草稿留存。';
       setStatus('');
     }
   }
@@ -229,12 +233,8 @@ ready(() => {
     }
   }
 
-  function downloadText(textarea, filename, label) {
-    if (!textarea.value) {
-      setStatus('没有可下载的内容，请先生成任务单。');
-      return;
-    }
-    const blob = new Blob([textarea.value], { type: 'text/markdown;charset=utf-8' });
+  function downloadFile(text, filename, type) {
+    const blob = new Blob([text], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -243,8 +243,55 @@ ready(() => {
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 30000);
+  }
+
+  function downloadText(textarea, filename, label) {
+    if (!textarea.value) {
+      setStatus('没有可下载的内容，请先生成任务单。');
+      return;
+    }
+    downloadFile(textarea.value, filename, 'text/markdown;charset=utf-8');
     setStatus(label + '已开始下载。');
   }
+
+  downloadDraft.addEventListener('click', () => {
+    try {
+      const text = serializeDraft(readForm());
+      downloadFile(text, 'task-brief-draft.json', 'application/json;charset=utf-8');
+      draftStatus.textContent = '草稿已开始下载。请确认文件已保存，下次可导入继续填写。';
+    } catch (err) {
+      draftStatus.textContent = '草稿未下载：' + err.message;
+    }
+  });
+
+  importDraft.addEventListener('change', async () => {
+    const file = importDraft.files[0];
+    if (!file) return;
+    importDraft.disabled = true;
+    try {
+      if (file.size > MAX_DRAFT_BYTES) throw new Error('文件超过 128 KB 上限。');
+      const data = parseDraft(await file.text());
+      if (dialog.open) throw new Error('请先完成当前确认，再导入草稿。');
+      if (formHasContent()) {
+        const ok = await confirmAction('导入会替换当前表单。需要保留现有内容时，请取消并先下载草稿。确定导入吗？');
+        if (!ok) {
+          draftStatus.textContent = '已取消导入，当前内容保持不变。';
+          return;
+        }
+      }
+      writeForm(data);
+      invalidateOutputs();
+      dirtyFromRestore = false;
+      persist();
+      setStatus('已导入草稿，请检查内容后重新生成任务单。');
+      draftStatus.textContent = '草稿已导入，可以继续填写。' + (saveIssue ? ' ' + saveIssue : '');
+    } catch (err) {
+      draftStatus.textContent = '未导入，当前内容保持不变：' + err.message;
+    } finally {
+      importDraft.value = '';
+      importDraft.disabled = false;
+    }
+  });
 
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
