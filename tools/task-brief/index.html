@@ -4,12 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>协作任务单 · Task Brief — 把需求交接清楚</title>
+<title>协作计划设计器 · Task Brief — 从任务到验收</title>
+<link rel="canonical" href="https://yichengxi.cn/tools/task-brief/">
+<meta property="og:title" content="协作计划设计器 · Task Brief">
+<meta property="og:description" content="明确任务、材料与验收，预览协作步骤，带走 Markdown 或本地任务包。">
+<meta property="og:url" content="https://yichengxi.cn/tools/task-brief/">
+<meta property="og:image" content="https://yichengxi.cn/assets/yi-chengxi-illustrated.jpg">
 <meta name="description" content="免费生成给 AI 执行者和复核者的任务单，明确目标、材料、限制、交付与验收。浏览器内处理，无需账号或 API Key。">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="../../assets/favicon.svg">
 <link rel="stylesheet" href="../evidence-brief/app.css?v=0.1.0">
-<link rel="stylesheet" href="app.css?v=20260920-draft">
+<link rel="stylesheet" href="app.css?v=20260920-workflow">
 </head>
 <body>
 <a class="skip" href="#workspace">跳到任务表单</a>
@@ -21,13 +26,13 @@
   <section class="intro">
     <div>
       <p class="eyebrow">A CLEARER HANDOFF FOR AI WORK</p>
-      <h1>协作任务单<span>Task Brief</span></h1>
+      <h1>协作计划设计器<span>Task Brief</span></h1>
       <p class="lead">把需求交清楚，<em>把结果验明白。</em></p>
-      <p>填写下方表单，一次生成「执行版」与「复核版」两份 Markdown 任务单，可复制或下载。所有内容仅保存在当前浏览器，不会发送到任何服务器或 AI 服务。</p>
+      <p>明确目标与材料，预览交付步骤，再带走执行、复核任务单或本地工作流 JSON。填写内容只在当前浏览器处理，不会发送到服务器或 AI 服务。</p>
     </div>
     <aside class="intro-aside">
       <p class="small">先说明目标与材料，再约定交付和验收。这里生成任务文本，不会替你调用模型。关闭标签页可能丢失资料；离开前下载草稿，下次导入继续。不要填写密码、密钥或不可分享的材料。</p>
-      <p class="small"><a href="https://github.com/chengxi562-hue/scott-portfolio/tree/main/tools/task-brief">查看源码</a></p>
+      <p class="small"><a href="../../projects/tongzhou/">了解同舟的设计与实测边界 ↗</a> · <a href="https://github.com/chengxi562-hue/scott-portfolio/tree/main/tools/task-brief">查看源码</a></p>
     </aside>
   </section>
 
@@ -91,6 +96,20 @@
       </div>
     </form>
 
+    <section class="workflow-panel" id="workflow" aria-labelledby="workflow-title">
+      <p class="eyebrow">DESIGN THE HANDOFF</p>
+      <h2 id="workflow-title">先看清步骤，再交给执行者。</h2>
+      <p>使用上方任务信息，选择直接执行，或把文字任务拆为计划、初稿与复核。这里展示的是任务设计，不是正在运行的 Agent。</p>
+      <div class="field-grid">
+        <label>流程方式<select id="workflowStrategy"><option value="direct">直接执行 → 检查产物</option><option value="staged">计划 → 初稿 → 复核（研究 / 写作）</option></select></label>
+        <label>任务包标识<input id="workflowId" value="my-task" maxlength="45" pattern="[A-Za-z0-9][A-Za-z0-9_-]{0,44}" aria-describedby="workflow-id-hint"><small id="workflow-id-hint">用于区分本地任务；修改目标时使用新标识，仅限英文字母、数字、连字符或下划线。</small></label>
+      </div>
+      <button type="button" id="previewWorkflow">生成协作计划</button>
+      <p id="workflowStatus" role="status"></p>
+      <ol id="workflowPreview" class="workflow-preview" aria-label="任务依赖与验收预览"></ol>
+      <button type="button" id="downloadWorkflow" disabled>下载本地工作流 JSON</button>
+      <details class="workflow-help"><summary>这个 JSON 能做什么？</summary><p>它包含任务、依赖、交付和验收条件，须审阅后交给你自己的本地执行器。本站不会安装软件、连接会员或自动开始任务。三阶段中的标记只用于推进流程，最终结果仍须检查。没有本地执行器时，可以直接使用下方 Markdown。</p><p>任务包与“草稿 JSON”是两种不同文件；草稿用于恢复本页输入，任务包用于交接执行。每阶段提示词上限 2400 字符，超出时应拆分材料；长内容仍可导出 Markdown。</p></details>
+    </section>
     <div class="task-output">
     <p id="status" class="notice" role="status"></p>
 
@@ -120,7 +139,7 @@
   <footer class="page-footer"><a href="../../">← 回到个人网站</a> · <a href="../evidence-brief/">用循据整理研究证据 ↗</a></footer>
 </main>
 
-<dialog id="confirmDialog">
+<dialog id="confirmDialog" aria-labelledby="confirmText">
   <form method="dialog">
     <p id="confirmText">当前表单已有内容，确定要替换吗？</p>
     <div class="toolbar">
@@ -130,6 +149,6 @@
   </form>
 </dialog>
 
-<script type="module" src="./app.mjs?v=20260920-draft"></script>
+<script type="module" src="./app.mjs?v=20260920-workflow"></script>
 </body>
 </html>
