@@ -15,7 +15,7 @@
     $('.theme-toggle').setAttribute('aria-pressed', String(dark));
     $('.theme-toggle').setAttribute('aria-label', dark ? text('切换到浅色模式', 'Switch to light mode') : text('切换到深色模式', 'Switch to dark mode'));
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = dark ? '#101d18' : '#f4f2e9';
+    if (meta) meta.content = dark ? '#101d18' : '#f7f4ec';
   }
   $('.theme-toggle').addEventListener('click', () => {
     root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
