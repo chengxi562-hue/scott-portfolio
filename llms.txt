@@ -1,0 +1,16 @@
+# 弋承熙 Yi Chengxi
+
+> 弋承熙的个人实践网站：在市场营销、AI 应用与日常问题之间，记录可解释的判断、流程与结果。首页中英双语，工具与案例为中文。纯静态站点，无账号、无追踪、无 API；公开工具在访客浏览器本地运行，输入不离开本机。
+
+## 页面
+
+- [首页](https://yichengxi.cn/): 双语个人实践图册——精选实践、方法、经历与联系方式
+- [循据 · Evidence Brief](https://yichengxi.cn/tools/evidence-brief/): 中文证据整理工具；记录说法、出处、摘录、反证与复核缺口，导出研究简报和 AI 任务文本
+- [协作计划设计器 · Task Brief](https://yichengxi.cn/tools/task-brief/): 中文任务设计工具；约定交付与验收，预览协作步骤，导出任务单 Markdown 或工作流 JSON
+- [同舟项目案例](https://yichengxi.cn/projects/tongzhou/): 一次有日期的本地 AI 协作调度实践，含验收记录与能力边界
+
+## 联系
+
+- 邮箱：3552922502@qq.com
+- [GitHub](https://github.com/chengxi562-hue)
+- [LinkedIn](https://www.linkedin.com/in/chengxi-yi-452460428/)
