@@ -1,3 +1,4 @@
 _dev/
 .playwright-cli/
 .DS_Store
+.claude/

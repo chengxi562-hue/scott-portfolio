@@ -10,6 +10,7 @@
 | [循据 · Evidence Brief](tools/evidence-brief/README.md) | 中文证据整理工具：记录说法、出处、摘录、反证与复核缺口，导出简报和 AI 任务文本 |
 | [协作计划设计器 · Task Brief](tools/task-brief/README.md) | 中文任务设计工具：执行/复核 Markdown、草稿恢复、任务依赖预览和工作流 JSON 导出 |
 | [同舟项目案例](projects/tongzhou/) | 有日期的本地调度实践、实际验收记录、公开版与本地版的能力边界 |
+| [玄枢项目案例](projects/xuanshu/) | 多体系命理交叉验证学习项目：三层纪律、15 体系可靠性分档、典籍出处与验证记录；明示不作预测服务 |
 
 两款工具无需账号或 API Key，在浏览器内处理输入，不调用模型、不上传材料、不连接站点所有者的会员。本地执行器、会员设置、私人任务和控制接口**不随本站分发**；导出的任务包需审阅后交给使用者自己的执行环境。无外部用户效果或节省比例的验证。
 
@@ -26,7 +27,8 @@ python3 -m http.server 8080 --bind 127.0.0.1
 - `assets/site.css`、`assets/site.js`、`assets/languages.js`：首页样式、交互与翻译。
 - `assets/yi-chengxi-illustrated.jpg`：当前主视觉；原始照片不入库、不发布。页面经 `<picture>` 提供 390/780 宽 webp，JPG 作回退与分享图。
 - `assets/project-*.svg`：流程概念图，不作为真实业务截图。
-- `tools/`、`projects/tongzhou/`：公开工具与同舟案例。
+- `tools/`、`projects/tongzhou/`、`projects/xuanshu/`：公开工具与项目案例。
+- `vision/`：个人每日显化仪式页（noindex、不在站内导航、不进 sitemap；宣言为自我暗示练习，页面自带边界声明）。
 - `404.html`、`CNAME`、`robots.txt`、`sitemap.xml`：错误页、域名与检索配置。
 - `assets/fonts/`：本地字体，woff2 优先、TTF 回退；两工具代码的 MIT 许可见各自 `LICENSE`，不改变来源材料和用户输入的权利归属。
 - `_dev/`、`.playwright-cli/`：已被 Git 忽略的本地草稿、历史和验证记录，不发布。
