@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try{var s=localStorage.getItem('site-theme');if(s!=='light'&&s!=='dark'){s=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=s;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=s==='dark'?'#101d18':'#f4f2e9'}catch(e){}</script>
+<title>玄枢 · 多体系命理交叉验证 — 不抹平冲突，只呈现证据 | 项目案例</title>
+<meta name="description" content="玄枢：15 套命理体系各自独立排盘，压到同一坐标系交叉验证。每条断言标注典籍出处与置信度；对拍不过的算法如实标未验证。学习研究项目，不作预测服务。">
+<link rel="canonical" href="https://yichengxi.cn/projects/xuanshu/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="玄枢 · 多体系命理交叉验证 — 不抹平冲突，只呈现证据">
+<meta property="og:description" content="15 套命理体系各自独立排盘，压到同一坐标系交叉验证。每条断言标注典籍出处与置信度；对拍不过的算法如实标未验证。">
+<meta property="og:image" content="https://yichengxi.cn/assets/yi-chengxi-illustrated.jpg">
+<meta property="og:image:width" content="1122">
+<meta property="og:image:height" content="1402">
+<meta name="twitter:card" content="summary">
+<meta property="og:url" content="https://yichengxi.cn/projects/xuanshu/">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XC9YybYJFX9Bv+Zy7uCEr3wGwmN+CqwdKy39NqUFs1A='; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="case.css">
+</head>
+<body>
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<header class="site-header">
+  <nav class="nav" aria-label="主导航">
+    <a class="nav-home" href="../../">首页</a>
+    <span class="nav-sep" aria-hidden="true">/</span>
+    <span class="nav-current" aria-current="page">玄枢 · 多体系命理交叉验证</span>
+    <button type="button" id="theme-toggle" class="theme-toggle" aria-pressed="false">深色模式</button>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-labelledby="page-title">
+    <p class="kicker">项目案例 · 个人实践图册</p>
+    <h1 id="page-title">玄枢 · 多体系命理交叉验证</h1>
+    <p class="lede">不抹平冲突，只呈现证据。</p>
+    <p class="hero-note">15 套命理体系各自独立排盘，压到同一坐标系里交叉验证：哪条断言、出自哪本典籍、置信度多少，全部可查。这是一个学习与研究项目，不作预测服务。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#sec-record">查看验证记录</a>
+      <a class="btn btn-secondary" href="#sec-limits">阅读边界与限制</a>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-problem">
+    <h2 id="sec-problem">问题</h2>
+    <div class="prose">
+      <p>命理体系之间没有共同语言：八字说「日主壬水，食伤泄秀」，星盘说「水星刑火星」，塔罗说「恋人逆位」。格式、术语、语义完全不同——<strong>直接放在一起投票毫无意义</strong>，所谓"交叉"只是把不相干的话排在一起。</p>
+      <p>这个行业"看起来很准"的秘诀，是把算出来的、猜出来的和编出来的混在一起说。这个项目做相反的约定——</p>
+      <blockquote class="quote">
+        <p>"计算层错了就是 BUG；解释层永远不能冒充事实；对拍不过 ground truth 的算法，如实标注未验证，不硬凑。"</p>
+      </blockquote>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-flow">
+    <h2 id="sec-flow">三层纪律</h2>
+    <p class="section-note">每一条输出都能回答一个问题：你属于哪一层，凭什么这么说。</p>
+    <ol class="flow" role="list">
+      <li class="flow-step">
+        <div class="flow-card">
+          <span class="flow-num" aria-hidden="true">01</span>
+          <h3>计算层</h3>
+          <p>排盘、行星位置、起卦、数字根——确定性运算，可独立对拍验证，错了就是 BUG。</p>
+        </div>
+      </li>
+      <li class="flow-connector" aria-hidden="true">
+        <svg viewBox="0 0 48 24" width="48" height="24" focusable="false" aria-hidden="true"><path d="M2 12 H40 M34 6 L42 12 L34 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </li>
+      <li class="flow-step">
+        <div class="flow-card">
+          <span class="flow-num" aria-hidden="true">02</span>
+          <h3>映射层</h3>
+          <p>传统术语翻译成七个现代维度（事业、财运、感情、健康、人际、心智、时机）——解释性判断，置信度显式压低。</p>
+        </div>
+      </li>
+      <li class="flow-connector" aria-hidden="true">
+        <svg viewBox="0 0 48 24" width="48" height="24" focusable="false" aria-hidden="true"><path d="M2 12 H40 M34 6 L42 12 L34 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </li>
+      <li class="flow-step">
+        <div class="flow-card">
+          <span class="flow-num" aria-hidden="true">03</span>
+          <h3>解释层</h3>
+          <p>自然语言阐述由模型生成，必须标注来源，永不进入验证层——不参与任何一致性计算。</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-systems">
+    <h2 id="sec-systems">已接入的 15 套体系</h2>
+    <p class="section-note">可靠性上限是防误用设计：塔罗的置信度再高也不会超过 0.2——这不是自谦，是防止弱证据在加权时被当成强证据。</p>
+    <div class="table-wrap">
+      <table class="record-table">
+        <caption>15 套体系、实现来源与判断依据（典籍出处）</caption>
+        <thead>
+          <tr>
+            <th scope="col">体系</th>
+            <th scope="col">实现来源</th>
+            <th scope="col">可靠性</th>
+            <th scope="col">判断依据</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>紫微斗数</td><td>iztro（Node 子进程）</td><td>0.65</td><td>《紫微全书》《太微赋》</td></tr>
+          <tr><td>八字 · 四柱</td><td>lunar-python</td><td>0.60</td><td>《子平真诠》《滴天髓》</td></tr>
+          <tr><td>西方本命星盘</td><td>ephem</td><td>0.55</td><td>—（整宫制，无典籍）</td></tr>
+          <tr><td>太乙神数</td><td>手写，72 局表对拍</td><td>0.45</td><td>《太乙金镜式经》《太乙淘金歌》</td></tr>
+          <tr><td>月相 · 日月角距</td><td>ephem</td><td>0.50</td><td>—（几何量）</td></tr>
+          <tr><td>易经 · 梅花易数</td><td>时间起卦算法</td><td>0.35</td><td>《梅花易数》</td></tr>
+          <tr><td>奇门遁甲</td><td>手写（转盘 · 拆补）</td><td>0.35</td><td>《烟波钓叟歌》</td></tr>
+          <tr><td>大六壬</td><td>手写（九宗门）</td><td>0.35</td><td>《六壬大全》</td></tr>
+          <tr><td>六爻 · 纳甲筮法</td><td>手写（京房八宫）</td><td>0.30</td><td>《增删卜易》</td></tr>
+          <tr><td>玄空飞星 · 阳宅</td><td>手写（下卦盘）</td><td>0.30</td><td>《沈氏玄空学》</td></tr>
+          <tr><td>八宅命卦 · 三元九运</td><td>农历年命卦</td><td>0.30</td><td>《八宅明镜》</td></tr>
+          <tr><td>生命灵数</td><td>数字根</td><td>0.25</td><td>—（纯象征编码）</td></tr>
+          <tr><td>塔罗 · 三张牌阵</td><td>随机（seed 可复现）</td><td>0.20</td><td>—（无预测能力）</td></tr>
+          <tr><td>占星骰子</td><td>随机（seed 可复现）</td><td>0.20</td><td>—（无预测能力）</td></tr>
+          <tr><td>卢恩符文</td><td>随机（seed 可复现）</td><td>0.20</td><td>—（无预测能力）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-conflict">
+    <h2 id="sec-conflict">冲突就是输出</h2>
+    <div class="prose">
+      <p>体系打架时<strong>不做加权平均和稀泥</strong>。八字依《子平真诠》说顺遂、塔罗抽出高塔说阻碍——这个矛盾本身就是最重要的信息：它可能意味着该维度确实处于变动中，也可能意味着某个体系的输入有问题。两种可能都值得知道，抹平它是一种欺骗。</p>
+      <p>同样，每个体系在每个维度上先内部聚合成<strong>一票</strong>再跨体系比较——否则星盘动辄几十条断言，会靠数量压过只有几条断言的八字。那不是交叉验证，是嗓门比赛。</p>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" id="sec-record" aria-labelledby="sec-record-h">
+    <h2 id="sec-record-h">验证记录</h2>
+    <p class="section-note">以下是有日期的对拍与测试记录。验证的是排盘算法的正确性，不是命理本身的有效性。</p>
+    <div class="table-wrap">
+      <table class="record-table">
+        <caption>2026-09-22 验证记录（工程检查，非实时数据）</caption>
+        <thead>
+          <tr>
+            <th scope="col">日期</th>
+            <th scope="col">项目</th>
+            <th scope="col">结果</th>
+            <th scope="col">说明与限制</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-09-22</td>
+            <td>跨引擎四柱对拍</td>
+            <td>一致</td>
+            <td>八字走 lunar-python、紫微走 iztro，两套完全独立的历法实现排出同一组四柱——这是对「输入数据正确」的强验证。</td>
+          </tr>
+          <tr>
+            <td>2026-09-22</td>
+            <td>太乙 72 局表对拍</td>
+            <td>太乙宫 / 文昌 12/12</td>
+            <td>以《武经总要》72 局表为 ground truth；计神 / 始击 12 局拟合（标 REVIEW）。</td>
+          </tr>
+          <tr>
+            <td>2026-09-22</td>
+            <td>太乙主算 / 客算</td>
+            <td>未验证（最高 3/12）</td>
+            <td>暴力搜索无法复现局表，相关断言已压低置信度，仅作参考——对拍不过就如实标注，不硬凑。</td>
+          </tr>
+          <tr>
+            <td>2026-09-22</td>
+            <td>玄空飞星结构性事实</td>
+            <td>通过</td>
+            <td>数学恒等式验证：逆飞必使当运星归本宫；下卦盘只有旺山旺向与上山下水两种结局（与元运无关），测试遍历八宫确认。</td>
+          </tr>
+          <tr>
+            <td>2026-09-22</td>
+            <td>QC 测试 4 套</td>
+            <td>全部通过</td>
+            <td>太乙对拍、玄空结构、质检机制自证（合成坏数据必须报警）、15 引擎全链路冒烟（0 BLOCKER）。</td>
+          </tr>
+          <tr>
+            <td>2026-09-22</td>
+            <td>15 引擎全链路推演</td>
+            <td>0 BLOCKER · 0 冲突</td>
+            <td>本人命盘样本：七维度共识全部生成，一致性 0.75–0.99。单次样本，不构成统计结论。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-note">本页为静态记录，不是实时仪表盘；数据不会随时间自动更新。</p>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" id="sec-limits" aria-labelledby="sec-limits-h">
+    <h2 id="sec-limits-h">边界与已知限制</h2>
+    <div class="prose">
+      <ul class="limits">
+        <li>「传统术语 → 现代生活维度」是<strong>解释而非事实</strong>。命理讲财官印食，不是事业财运感情；映射规则是本项目的判断，不是古人原意。</li>
+        <li>塔罗、占星骰子、卢恩为随机象征系统，<strong>无预测能力</strong>，如实标注、权重最低，不参与主导结论。</li>
+        <li>太乙主算 / 客算未能对拍 72 局表，相关结论（迫、关、囚、杜塞）置信度已压低，仅作参考。</li>
+        <li>玄空飞星需实地坐向与建成年份，远程不占；峦头（外部形貌）不可远程，结论上限已声明。</li>
+        <li>所有输出不构成医疗、法律、投资建议；本项目是学习与交叉验证方法的练习，不作预测服务。</li>
+        <li>排盘引擎为本地项目，代码不随本站分发；本页是方法与验证记录的公开说明。</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section" aria-labelledby="sec-role">
+    <h2 id="sec-role">我的角色</h2>
+    <div class="prose">
+      <blockquote class="quote">
+        <p>"我负责需求定义、体系取舍、验证标准与结果验收；排盘引擎由 AI 编程工具按典籍口径实现，问题通过对拍与独立检查发现与修正。"</p>
+      </blockquote>
+    </div>
+  </section>
+
+  <hr class="rule" aria-hidden="true">
+
+  <section class="section cta" aria-labelledby="sec-cta">
+    <h2 id="sec-cta">看看另一次实践</h2>
+    <p class="section-note">同样的纪律，用在 AI 协作上：把任务、依赖与验收写清楚。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="../tongzhou/">阅读同舟 · AI 协作案例</a>
+      <a class="btn btn-secondary" href="../../">返回首页</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p><a href="../../">返回首页</a></p>
+  <p class="footer-date">记录日期：2026-09-22</p>
+</footer>
+
+<script src="case.js"></script>
+</body>
+</html>
