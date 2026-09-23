@@ -6,7 +6,7 @@
 
 - [首页](https://yichengxi.cn/): 双语个人实践图册——精选实践、方法、经历与联系方式
 - [循据 · Evidence Brief](https://yichengxi.cn/tools/evidence-brief/): 中文证据整理工具；记录说法、出处、摘录、反证与复核缺口，导出研究简报和 AI 任务文本
-- [协作计划设计器 · Task Brief](https://yichengxi.cn/tools/task-brief/): 中文任务设计工具；约定交付与验收，预览协作步骤，导出任务单 Markdown 或工作流 JSON
+- [协作计划设计器 · Task Brief](https://yichengxi.cn/tools/task-brief/): 中文手动交接工具；约定交付与验收，逐步保存真实计划、初稿与复核，记录人工判断，下载可恢复交接 JSON 和完整 Markdown；可另导出工作流 JSON
 - [同舟项目案例](https://yichengxi.cn/projects/tongzhou/): 一次有日期的本地 AI 协作调度实践，含验收记录与能力边界
 - [玄枢项目案例](https://yichengxi.cn/projects/xuanshu/): 15 套命理体系的多体系交叉验证学习项目——三层纪律、典籍出处逐条标注、对拍不过的算法如实标未验证；不作预测服务
 

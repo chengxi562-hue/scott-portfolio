@@ -1,6 +1,7 @@
 import { normalizeBrief, buildBrief } from './core.mjs';
 import { MAX_DRAFT_BYTES, serializeDraft, parseDraft } from './draft.mjs';
 import { buildWorkflow, serializeWorkflow } from './workflow.mjs';
+import { setupHandoff } from './handoff-ui.mjs';
 
 const STORAGE_KEY = 'task-brief-v1';
 const FIELDS = ['type', 'goal', 'materials', 'facts', 'constraints', 'deliverable', 'acceptance', 'unknowns'];
@@ -67,6 +68,8 @@ ready(() => {
   const workflowPreview = document.getElementById('workflowPreview');
   const workflowDownload = document.getElementById('downloadWorkflow');
   let workflowText = '';
+  let handoff = null;
+  let restoredBrief = false;
 
   function invalidateWorkflow() {
     workflowText = '';
@@ -163,6 +166,7 @@ ready(() => {
     copyReview.disabled = true;
     downloadExecute.disabled = true;
     downloadReview.disabled = true;
+    handoff?.sync(readForm());
   }
 
   function persist() {
@@ -200,6 +204,7 @@ ready(() => {
     try {
       const clean = normalizeBrief(parsed, { allowIncomplete: true });
       writeForm(clean);
+      restoredBrief = true;
     } catch (err) {
       dirtyFromRestore = true;
       setStatus('本地缓存内容不符合格式，已忽略；编辑表单后将覆盖缓存。');
@@ -409,4 +414,12 @@ ready(() => {
   initTheme();
   restore();
   invalidateOutputs();
+  handoff = setupHandoff({
+    readBrief: readForm,
+    applyBrief(brief) { writeForm(brief); invalidateOutputs(); persist(); },
+    confirmAction,
+    isConfirmOpen: () => dialog.open,
+    hasRestoredBrief: restoredBrief,
+    downloadFile,
+  });
 });

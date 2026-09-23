@@ -3,24 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>try{var s=localStorage.getItem('site-theme');if(s!=='light'&&s!=='dark'){s=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=s;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=s==='dark'?'#101d18':'#f4f2e9'}catch(e){}</script>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XC9YybYJFX9Bv+Zy7uCEr3wGwmN+CqwdKy39NqUFs1A='; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ltyRjh8gTlxfJNa/5dhahKrnD0l+4bD6GaAC2dw7V3c='; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<script>try{var s=localStorage.getItem('site-theme');if(s!=='light'&&s!=='dark'){s=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=s;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=s==='dark'?'#171d28':'#f7f1e6'}catch(e){}</script>
 <title>协作计划设计器 · Task Brief — 从任务到验收</title>
 <link rel="canonical" href="https://yichengxi.cn/tools/task-brief/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="协作计划设计器 · Task Brief">
-<meta property="og:description" content="明确任务、材料与验收，预览协作步骤，带走 Markdown 或本地任务包。">
+<meta property="og:description" content="写清任务，接回实际计划、初稿与复核，记录人工验收，带走完整交接记录。">
 <meta property="og:url" content="https://yichengxi.cn/tools/task-brief/">
 <meta property="og:image" content="https://yichengxi.cn/assets/yi-chengxi-illustrated.jpg">
 <meta property="og:image:width" content="1122">
 <meta property="og:image:height" content="1402">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="免费生成给 AI 执行者和复核者的任务单，明确目标、材料、限制、交付与验收。浏览器内处理，无需账号或 API Key。">
+<meta name="description" content="写清目标、材料、交付与验收，接回自己使用的 AI 产物并导出完整交接记录。浏览器内处理，无需账号或 API Key，不调用模型。">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="../../assets/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="../evidence-brief/app.css?v=0.1.0">
-<link rel="stylesheet" href="app.css?v=20260920-workflow">
+<link rel="stylesheet" href="../evidence-brief/app.css?v=20260923-folio">
+<link rel="stylesheet" href="app.css?v=20260923-folio">
 </head>
 <body>
 <a class="skip" href="#workspace">跳到任务表单</a>
@@ -34,10 +34,10 @@
       <p class="eyebrow">A CLEARER HANDOFF FOR AI WORK</p>
       <h1>协作计划设计器<span>Task Brief</span></h1>
       <p class="lead">把需求交清楚，<em>把结果验明白。</em></p>
-      <p>明确目标与材料，预览交付步骤，再带走执行、复核任务单或本地工作流 JSON。填写内容只在当前浏览器处理，不会发送到服务器或 AI 服务。</p>
+      <p>写清任务，把每一步交给自己使用的 AI，再把真实产物带回来复核。最后带走任务、产物和人工验收的完整记录。填写内容只在当前浏览器处理，不会发送到服务器或 AI 服务。</p>
     </div>
     <aside class="intro-aside">
-      <p class="small">先说明目标与材料，再约定交付和验收。这里生成任务文本，不会替你调用模型。关闭标签页可能丢失资料；离开前下载草稿，下次导入继续。不要填写密码、密钥或不可分享的材料。</p>
+      <p class="small">先说明目标与材料，再约定交付和验收。这里生成任务文本，不会替你调用模型。只写了任务时可下载草稿；已有产物和人工判断时请下载交接记录。不要填写密码、密钥或不可分享的材料。</p>
       <p class="small"><a href="../../projects/tongzhou/">了解同舟的设计与实测边界 ↗</a> · <a href="https://github.com/chengxi562-hue/scott-portfolio/tree/main/tools/task-brief">查看源码</a></p>
     </aside>
   </section>
@@ -102,9 +102,35 @@
       </div>
     </form>
 
+    <section class="handoff-panel" id="manual-handoff" aria-labelledby="handoff-title">
+      <p class="eyebrow">BRING THE WORK BACK</p>
+      <h2 id="handoff-title">交出去，也接得回来。</h2>
+      <p>填写上方任务信息，然后开始手动交接。研究与写作按「计划 → 初稿 → 复核」进行；代码任务记录单步执行产物。每一步由你复制给自己的 AI，再粘贴真实结果。</p>
+      <div class="toolbar">
+        <button type="button" class="primary" id="startHandoff">开始手动交接</button>
+        <button type="button" id="downloadHandoff" disabled>下载交接记录 JSON</button>
+        <label class="file-button">恢复交接记录<input type="file" id="importHandoff" accept=".json,application/json" aria-label="恢复手动交接记录" aria-describedby="handoff-format-hint"></label>
+        <button type="button" id="exportHandoff" disabled>导出完整 Markdown</button>
+      </div>
+      <p class="small" id="handoff-format-hint">交接记录包含实际产物与人工判断，最多 512 KiB；上方的「草稿 JSON」只保存任务表单。两者使用不同的恢复入口。</p>
+      <p class="small" id="handoffSaveState"></p>
+      <p id="handoffStatus" class="handoff-status" role="status"></p>
+      <div id="handoffContent" hidden>
+        <div id="handoffStages" class="handoff-stages"></div>
+        <section class="handoff-acceptance" aria-labelledby="handoff-acceptance-title">
+          <h3 id="handoff-acceptance-title">最后，由你对照标准验收。</h3>
+          <p>上方验收标准每个非空行对应一项。填写产物、阶段标记或 AI 的“通过”都不会自动替你完成验收；通过与待修改须写明依据。</p>
+          <p id="handoffSummary" class="handoff-summary"></p>
+          <div id="handoffChecks" class="handoff-checks"></div>
+          <p id="handoffUnknowns" class="small"></p>
+        </section>
+        <details id="handoffPreserved" class="handoff-preserved" hidden><summary>保留的旧流程产物与验收记录</summary><div id="handoffPreservedBody"></div></details>
+      </div>
+    </section>
+
     <section class="workflow-panel" id="workflow" aria-labelledby="workflow-title">
       <p class="eyebrow">DESIGN THE HANDOFF</p>
-      <h2 id="workflow-title">先看清步骤，再交给执行者。</h2>
+      <h2 id="workflow-title">已有执行器？也可以导出本地工作流。</h2>
       <p>使用上方任务信息，选择直接执行，或把文字任务拆为计划、初稿与复核。这里展示的是任务设计，不是正在运行的 Agent。</p>
       <div class="field-grid">
         <label>流程方式<select id="workflowStrategy"><option value="direct">直接执行 → 检查产物</option><option value="staged">计划 → 初稿 → 复核（研究 / 写作）</option></select></label>
@@ -155,6 +181,6 @@
   </form>
 </dialog>
 
-<script type="module" src="./app.mjs?v=20260920-opt1"></script>
+<script type="module" src="./app.mjs?v=20260923-handoff1"></script>
 </body>
 </html>

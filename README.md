@@ -1,70 +1,59 @@
-# 弋承熙 Yi Chengxi · 个人实践网站
+# 弋承熙 · Chengxi Yi
 
-[在线网站](https://yichengxi.cn/) · 当前功能发布里程碑：`354924e`（2026-09-22，玄枢案例页、显化页与标语改版；承接 `dc62b60` 检索验证与暗色对比度修复）。定位是**长期个人品牌，兼顾求职**；本人负责需求定义、流程设计与结果验收，AI 工具参与实现，不把成果描述为独立编程能力。
+个人网站，以及两款可以在浏览器里使用的小工具。
 
-## 当前能力
+[个人网站](https://yichengxi.cn/) · [LinkedIn](https://www.linkedin.com/in/chengxi-yi-452460428/) · [反馈问题](https://github.com/chengxi562-hue/scott-portfolio/issues)
 
-| 入口 | 公开内容与边界 |
-|---|---|
-| 首页 `index.html` | 双语个人实践图册、照片参考插画、项目图解、逐步案例阅读器、主题与语言切换、分享链接、联系及中文简历 |
-| [循据 · Evidence Brief](tools/evidence-brief/README.md) | 中文证据整理工具：记录说法、出处、摘录、反证与复核缺口，导出简报和 AI 任务文本 |
-| [协作计划设计器 · Task Brief](tools/task-brief/README.md) | 中文任务设计工具：执行/复核 Markdown、草稿恢复、任务依赖预览和工作流 JSON 导出 |
-| [同舟项目案例](projects/tongzhou/) | 有日期的本地调度实践、实际验收记录、公开版与本地版的能力边界 |
-| [玄枢项目案例](projects/xuanshu/) | 多体系命理交叉验证学习项目：三层纪律、15 体系可靠性分档、典籍出处与验证记录；明示不作预测服务 |
+我在西南财经大学与 Audencia 的联合培养项目学习市场营销，关注金融服务、商业研究与 AI 应用。我负责问题定义、流程设计与结果核对，AI 编程工具协助实现。
 
-两款工具无需账号或 API Key，在浏览器内处理输入，不调用模型、不上传材料、不连接站点所有者的会员。本地执行器、会员设置、私人任务和控制接口**不随本站分发**；导出的任务包需审阅后交给使用者自己的执行环境。无外部用户效果或节省比例的验证。
+## 可以用来做什么
 
-## 本地运行与文件
+| 你要完成的事 | 工具 | 可以带走的结果 |
+| --- | --- | --- |
+| 把 AI 回答中的说法和出处整理清楚 | **[循据 · Evidence Brief](https://yichengxi.cn/tools/evidence-brief/)** | 带来源摘录、反证和待核验问题的 Markdown 简报，以及可恢复的资料备份 |
+| 把一个模糊目标交代给 AI 或协作者，再接回实际结果 | **[协作计划设计器 · Task Brief](https://yichengxi.cn/tools/task-brief/)** | 包含原任务、实际计划和初稿、复核意见与人工判断的完整交接记录 |
 
-无需安装依赖或构建，在仓库根目录运行：
+两款工具目前都是中文界面，无需账号或 API Key。输入在浏览器中处理，不自动上传材料、不调用模型；你决定把导出的内容交给谁。
+
+### 循据：从说法到可追溯简报
+
+写研究问题 → 添加具体说法 → 记录出处与摘录 → 标记支持、反驳或背景 → 记录人工复核 → 导出简报。
+
+缺日期、缺原文或缺证据的条目会保留待核验提示。文字匹配不等于事实真实，工具不会替你判断真假。
+
+[使用说明、示例与源码](tools/evidence-brief/README.md)
+
+### Task Brief：让任务更容易交接
+
+填写目标与材料 → 写清交付与验收 → 复制本步任务给自己的 AI → 保存实际计划、初稿和复核 → 人工核对 → 下载完整记录。
+
+“手动交接”逐阶段保存真实产物，生成带有上游材料的下一阶段任务。任务或产物改变后，旧人工判断会失效，原稿保留供核对；交接 JSON 可恢复完整记录，Markdown 用于阅读和交付。它不依赖站点所有者的会员或私人执行器；工作流 JSON 是独立的高级出口。
+
+[使用说明、格式与源码](tools/task-brief/README.md)
+
+## 其他实践
+
+[同舟](projects/tongzhou/)和[玄枢](projects/xuanshu/)是公开案例页。个人投研、知识整理等项目展示问题、方法和边界；这些本地系统没有作为公共服务开放。它们与上面可直接使用的浏览器工具是不同交付。
+
+## 本地运行
+
+这是一个静态 HTML / CSS / JavaScript 网站，无需安装依赖或构建。
 
 ```sh
 python3 -m http.server 8080 --bind 127.0.0.1
 ```
 
-访问 `http://127.0.0.1:8080/`。工具需要 JavaScript 和 ES modules，不建议直接双击 HTML。无脚本时首页正文、导航和原生项目详情仍可阅读。
+打开 `http://127.0.0.1:8080/`。工具使用 ES modules，请通过本地服务器打开，不要直接双击 HTML。
 
-- `assets/site.css`、`assets/site.js`、`assets/languages.js`：首页样式、交互与翻译。
-- `assets/yi-chengxi-illustrated.jpg`：当前主视觉；原始照片不入库、不发布。页面经 `<picture>` 提供 390/780 宽 webp，JPG 作回退与分享图。
-- `assets/project-*.svg`：流程概念图，不作为真实业务截图。
-- `tools/`、`projects/tongzhou/`、`projects/xuanshu/`：公开工具与项目案例。
-- `vision/`：个人每日显化仪式页（noindex、不在站内导航、不进 sitemap；宣言为自我暗示练习，页面自带边界声明）。
-- `404.html`、`CNAME`、`robots.txt`、`sitemap.xml`：错误页、域名与检索配置。
-- `assets/fonts/`：本地字体，woff2 优先、TTF 回退；两工具代码的 MIT 许可见各自 `LICENSE`，不改变来源材料和用户输入的权利归属。
-- `_dev/`、`.playwright-cli/`：已被 Git 忽略的本地草稿、历史和验证记录，不发布。
+- [循据代码与说明](tools/evidence-brief/)
+- [Task Brief 代码与说明](tools/task-brief/)
+- [开发、测试与发布说明](docs/DEVELOPMENT.md)
+- [设计记录](DESIGN.md)
 
-沿用 GitHub Pages 的 `main` 根目录发布。推送会触发上线，执行前需确认授权和发布范围；不得混入私人档案、凭证、原始照片或本地验证材料。设计与内容约定见 [DESIGN.md](DESIGN.md)。
+两款工具代码分别采用各自目录内的 MIT 许可；字体许可随字体保留。材料与用户输入的权利不因工具许可改变。
 
-## 验证与发布边界
+**2026-09-23 版本**：个人窗景插画、双语首页、统一深浅主题，以及 Task Brief 手动交接。工具已经使用合成材料进行本地行为验证；暂无经过外部用户验证的效率提升或使用量数据。功能通过不等于每份用户材料都正确，最终判断仍由使用者负责。
 
-2026-09-22 玄枢案例页、显化页与标语改版（`354924e`）：
+---
 
-- **本地已验**：51/51 网站测试；i18n 中英 130=130 键对称。独立设计评审（可访问性/响应式/一致性/CSP/视觉）后修复三处：hero h1 折行（中文上限收至 5.3rem；英文去行尾破折号、上限 4.5rem、手机下限 2.5rem）、vision 宣言在 ≤390px 手机折行（下限收至 2rem）、玄枢卡"查看过程与边界"对 JS 用户不可达（details 对 `#xuanshu` 例外显示）。中英 × 1440/390/375 实测标语三行与宣言均不折行，控制台零错误。
-- **发布已核对**：首页、`/projects/xuanshu/`、`/vision/`、带新版本号的 site.css 与 languages.js、project-xuanshu.svg、sitemap.xml 均 HTTP 200；线上首页已含新标语与玄枢卡片，CSS 已含新字号，sitemap 已含 xuanshu，vision 页带 noindex。未做线上交互复测：本次无新交互组件，首页既有交互未改动。
-
-2026-09-21 跟进优化（`dc62b60`）的验证证据位于本地 `_dev/optimize-20260921/`：
-
-- **本地已验**：51/51 网站测试；首页移动 Lighthouse 复验 SEO 92→100、agentic-browsing 67→100，同舟无障碍 96→100（暗色 `--ochre` 对比度 4.45→4.67）；四页 CSP `connect-src` 由 `none` 放宽为 `self`（外联仍全禁），404 页补 CSP；新增 `llms.txt` 与 `apple-touch-icon.png`；首页桌面/移动 × 深浅截图目检无版式变化。
-- **发布已核对**：线上核对结果追加于同一 `_dev` 目录的 NOTES 记录。
-
-2026-09-20 全面优化（`f3fa91e`）的验证证据位于本地 `_dev/optimize-20260920/`：
-
-- **本地已验**：51 项 Node 测试通过；1440×900 与 390×844 浏览器检查含主题（深浅、系统偏好首访、跨页记忆）、中英切换、案例阅读器、分享与邮箱复制、循据示例预览、任务单示例生成、三阶段预览与草稿下载/导入回读；新旧首页截图像素对比差异仅在 webp 重压缩区，布局零变化。
-- **发布已核对**：16 项线上资源 HTTP 200 且 SHA-256 与本地一致；4 项退役资产返回 404。
-- **线上交互已复验**：真实浏览器在线上完成首页→工具导航、示例生成、工作流 JSON 下载（`tongzhou-workflow.json`）、草稿下载→导入回读、案例分享复制、英文与 390px 检查、暗色系统偏好首访；控制台零错误。本次复验同时覆盖了上一个里程碑 `a4d412b` 未完成的线上点击回归。没有覆盖所有设备或外部用户可用性。
-
-离线回归命令：
-
-```sh
-node --test tools/evidence-brief/core.test.mjs tools/task-brief/core.test.mjs tools/task-brief/draft.test.mjs tools/task-brief/workflow.test.mjs
-```
-
-这 51 项是网站测试；同舟案例里的本地调度器检查是另一组工程记录，不合并计算。功能或视觉改动后按影响补验证，区分本地通过、发布成功与线上交互验收。各页内联主题初始化脚本受 CSP 哈希保护：修改该脚本必须重新计算 SHA-256 并同步各页 CSP，否则脚本被拦截、暗色偏好首访失效。
-
-## 历史记录（不作为当前实现说明）
-
-- 2026-09-20 晚曾短暂上线研究档案改版 `4db3a71`（四方向样稿对比选定方向 B；51/51 测试、19/19 对比度、线上 11/11 资源哈希与交互复验均通过）。用户验收对视觉不满意，同日以 `e225f45` 全量回滚恢复本版。样稿、截图与验证记录保留在本地 `_dev/design-evolution-20260920/` 与 Git 历史，不作为当前设计；视觉重做按用户决定暂停。
-- 2026-09-19 的品牌重构曾尝试概念静物、CSS 三层工作台、视角调整、项目筛选和模拟流程。它们已由个人插画与逐步案例阅读器替代；旧素材和 `_dev/brand-redesign-20260919/` 保留，不恢复为当前功能。
-- `d577d06`（2026-09-20）完成 Task Brief 草稿下载与恢复；`a4d412b` 在此基础上加入工作流设计器与同舟案例。
-- `f3fa91e`（2026-09-20）全面优化：woff2 字体与 webp 主视觉、死代码清理、系统偏好主题、全站 CSP 与分享元数据。不再被引用的旧资产（旧主视觉、旧插画、原型截图、Outfit 字体、旧命名简历）移入本地 `_dev/archives-assets-20260920/`，Git 历史保留。
-- 旧版 README/DESIGN 全文可从 Git 历史查看。历史验证只说明对应版本，不覆盖后续改动。
+**English** — A personal website and two browser tools for evidence briefs and AI task handoffs. The tools currently have Chinese interfaces and do not call models or upload input. I define the problems and workflows and review the outputs, with implementation supported by AI coding tools. See the individual guides for capabilities and limitations.
