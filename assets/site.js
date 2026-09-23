@@ -45,7 +45,7 @@
     root.lang = language === 'en' ? 'en' : 'zh-CN';
     root.dataset.language = language;
     $$('[data-t]').forEach(element => { element.textContent = dictionary[element.dataset.t]; });
-    ['alt', 'aria-label'].forEach(attribute => {
+    ['alt', 'aria-label', 'title'].forEach(attribute => {
       $$('[data-t-' + attribute + ']').forEach(element => {
         element.setAttribute(attribute, dictionary[element.getAttribute('data-t-' + attribute)]);
       });
@@ -75,7 +75,7 @@
   }
   function setupLanguage() {
     const keys = new Set(['metaTitle', 'metaDescription', 'fImageAlt']);
-    ['data-t', 'data-t-alt', 'data-t-aria-label'].forEach(attribute => {
+    ['data-t', 'data-t-alt', 'data-t-aria-label', 'data-t-title'].forEach(attribute => {
       $$('[' + attribute + ']').forEach(element => keys.add(element.getAttribute(attribute)));
     });
     languageReady = ['zh', 'en'].every(code => {
@@ -119,7 +119,7 @@
     const nav = $('#site-nav');
     const button = $('.nav-toggle');
     if (!nav || !button) return;
-    const mobile = matchMedia('(max-width:640px)');
+    const mobile = matchMedia('(max-width:820px)');
     const controls = button.closest('.header-controls');
     function placeNavigation() {
       if (!controls || controls.parentElement !== nav.parentElement) return;
