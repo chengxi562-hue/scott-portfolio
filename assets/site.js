@@ -1,105 +1,266 @@
-(function () {
+/* Folio homepage. Each enhancement is optional; native content stays available. */
+(() => {
   'use strict';
   const root = document.documentElement;
-  const $ = (s, c = document) => c.querySelector(s);
-  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
-  const projects = ['research', 'knowledge', 'collaboration'];
-  let project = 'research', step = 0, language = 'zh';
+  const $ = (selector, context = document) => context.querySelector(selector);
+  const $$ = (selector, context = document) => [...context.querySelectorAll(selector)];
+  const projectIds = new Set(['research', 'knowledge', 'collaboration', 'xuanshu']);
+  let language = 'zh';
+  let languageReady = false;
+  let closeMenu = () => {};
   const text = (zh, en) => language === 'en' ? en : zh;
-  document.body.classList.add('js');
-  $$('.js-only').forEach(el => el.hidden = false);
+  function stored(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
   function save(key, value) { try { localStorage.setItem(key, value); } catch (_) {} }
-  function themeLabel() {
+  function state() { return history.state && typeof history.state === 'object' ? history.state : {}; }
+  function rememberLanguage(url = location.href) {
+    try { history.replaceState({ ...state(), siteLanguage: language }, '', url); } catch (_) {}
+  }
+  function updateThemeLabel() {
     const dark = root.dataset.theme === 'dark';
-    $('.theme-toggle').textContent = dark ? text('浅色模式', 'Light') : text('深色模式', 'Dark');
-    $('.theme-toggle').setAttribute('aria-pressed', String(dark));
-    $('.theme-toggle').setAttribute('aria-label', dark ? text('切换到浅色模式', 'Switch to light mode') : text('切换到深色模式', 'Switch to dark mode'));
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = dark ? '#101d18' : '#f4f2e9';
+    const button = $('.theme-toggle');
+    if (button) {
+      button.textContent = dark ? text('浅色', 'Light') : text('深色', 'Dark');
+      button.setAttribute('aria-label', dark ? text('切换到浅色模式', 'Switch to light mode') : text('切换到深色模式', 'Switch to dark mode'));
+      button.setAttribute('aria-pressed', String(dark));
+    }
+    const themeColor = $('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = dark ? '#171d28' : '#f7f1e6';
   }
-  $('.theme-toggle').addEventListener('click', () => {
-    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    save('site-theme', root.dataset.theme); themeLabel();
-  });
-  function renderCase() {
-    const card = document.getElementById(project);
-    $('.case-page-number').textContent = '0' + (step + 1);
-    $('#case-heading').textContent = $('h3', card).textContent;
-    const fragment = document.createDocumentFragment();
-    fragment.append($$('.case h4', card)[step].cloneNode(true), $$('.case p', card)[step].cloneNode(true));
-    $('#case-content').replaceChildren(fragment);
-    $('#case-position').textContent = (step + 1) + ' / 3';
-    $('#case-next').textContent = step === 2 ? text('下一个项目 →', 'Next project →') : text('下一步 →', 'Next step →');
-    $$('[data-project]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.project === project)));
-    $$('[data-step]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.step) === step)));
-    $('#share-status').textContent = '';
-    $('#share-status').parentElement.querySelector('.copy-fallback')?.remove();
+  function updateNavigationLabel() {
+    const toggle = $('.nav-toggle');
+    if (!toggle) return;
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.textContent = open ? text('关闭', 'Close') : text('菜单', 'Menu');
+    toggle.setAttribute('aria-label', open ? text('关闭主导航', 'Close main navigation') : text('打开主导航', 'Open main navigation'));
   }
-  function changeLanguage(next) {
+  function resetCopy() {
+    const status = $('.copy-status');
+    if (status) status.textContent = '';
+    $$('.copy-fallback').forEach(field => field.remove());
+  }
+  function applyLanguage(next) {
+    if (!languageReady) return;
     language = next === 'en' ? 'en' : 'zh';
+    const dictionary = window.SITE_TRANSLATIONS[language];
     root.lang = language === 'en' ? 'en' : 'zh-CN';
     root.dataset.language = language;
-    const dictionary = window.SITE_TRANSLATIONS[language];
-    $$('[data-t]').forEach(el => { el.textContent = dictionary[el.dataset.t]; });
-    ['alt', 'aria-label'].forEach(attr => $$('[data-t-' + attr + ']').forEach(el => el.setAttribute(attr, dictionary[el.getAttribute('data-t-' + attr)])));
-    $('.language-toggle').textContent = language === 'en' ? '中文' : 'EN';
-    $('.language-toggle').setAttribute('aria-label', text('Switch to English', '切换到中文'));
-    document.title = text('弋承熙 · 商业、AI 与日常实践', 'Yi Chengxi · Business, AI & Everyday Practice');
-    $('meta[name="description"]').content = text('弋承熙的个人实践网站：在商业、AI 与日常问题之间，记录可解释的判断、流程与结果。', 'A personal fieldbook by Yi Chengxi: projects, decisions and practical explorations across business and AI.');
-    $$('.card .art img').forEach(img => { const id = img.closest('.card').id; img.src = 'assets/project-' + id + (language === 'en' ? '-en' : '') + '.svg'; });
-    themeLabel(); renderCase(); $('.copy-status').textContent = '';
+    $$('[data-t]').forEach(element => { element.textContent = dictionary[element.dataset.t]; });
+    ['alt', 'aria-label'].forEach(attribute => {
+      $$('[data-t-' + attribute + ']').forEach(element => {
+        element.setAttribute(attribute, dictionary[element.getAttribute('data-t-' + attribute)]);
+      });
+    });
+    const button = $('.language-toggle');
+    if (button) {
+      button.textContent = language === 'en' ? '中文' : 'EN';
+      button.setAttribute('aria-label', language === 'en' ? '切换到中文' : 'Switch to English');
+    }
+    document.title = dictionary.metaTitle;
+    const metadata = {
+      'meta[name="description"]': dictionary.metaDescription,
+      'meta[property="og:title"]': dictionary.metaTitle,
+      'meta[property="og:description"]': dictionary.metaDescription,
+      'meta[name="twitter:title"]': dictionary.metaTitle,
+      'meta[name="twitter:description"]': dictionary.metaDescription,
+      'meta[property="og:image:alt"]': dictionary.fImageAlt,
+      'meta[name="twitter:image:alt"]': dictionary.fImageAlt,
+      'meta[property="og:locale"]': language === 'en' ? 'en_US' : 'zh_CN',
+      'meta[property="og:locale:alternate"]': language === 'en' ? 'zh_CN' : 'en_US'
+    };
+    Object.entries(metadata).forEach(([selector, value]) => { const element = $(selector); if (element) element.content = value; });
+    updateThemeLabel();
+    updateNavigationLabel();
+    resetCopy();
     save('site-language', language);
   }
-  let initial = 'zh';
-  try { initial = localStorage.getItem('site-language') || 'zh'; } catch (_) {}
-  const urlLang = new URL(location.href).searchParams.get('lang');
-  if (urlLang === 'en' || urlLang === 'zh') initial = urlLang;
-  changeLanguage(initial);
-  $('.language-toggle').addEventListener('click', () => {
-    changeLanguage(language === 'en' ? 'zh' : 'en');
-    const url = new URL(location.href); url.searchParams.set('lang', language); history.replaceState(null, '', url);
-  });
-  const toggle = $('.nav-toggle'), nav = $('#site-nav'), mobile = matchMedia('(max-width:640px)');
-  function closeMenu() { toggle.setAttribute('aria-expanded', 'false'); nav.hidden = mobile.matches; }
-  closeMenu(); mobile.addEventListener('change', closeMenu);
-  toggle.addEventListener('click', () => { const open = toggle.getAttribute('aria-expanded') !== 'true'; toggle.setAttribute('aria-expanded', String(open)); nav.hidden = !open; });
-  nav.addEventListener('click', e => { if (e.target.closest('a')) closeMenu(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { closeMenu(); toggle.focus(); } });
-  function setCase(p, s, updateUrl = true) {
-    project = p; step = s; renderCase();
-    if (updateUrl) history.replaceState(null, '', '#case-' + project + '-' + step);
+  function setupLanguage() {
+    const keys = new Set(['metaTitle', 'metaDescription', 'fImageAlt']);
+    ['data-t', 'data-t-alt', 'data-t-aria-label'].forEach(attribute => {
+      $$('[' + attribute + ']').forEach(element => keys.add(element.getAttribute(attribute)));
+    });
+    languageReady = ['zh', 'en'].every(code => {
+      const dictionary = window.SITE_TRANSLATIONS?.[code];
+      return dictionary && [...keys].every(key => typeof dictionary[key] === 'string');
+    });
+    if (!languageReady) return;
+    const requested = new URL(location.href).searchParams.get('lang');
+    applyLanguage(requested === 'en' || requested === 'zh' ? requested : stored('site-language'));
+    rememberLanguage();
+    const button = $('.language-toggle');
+    if (!button) return;
+    button.addEventListener('click', () => {
+      applyLanguage(language === 'en' ? 'zh' : 'en');
+      const url = new URL(location.href);
+      url.searchParams.set('lang', language);
+      rememberLanguage(url);
+    });
+    button.hidden = false;
   }
-  function fromHash() {
-    const match = location.hash.match(/^#case-(research|knowledge|collaboration)-([012])$/);
-    if (match) { setCase(match[1], Number(match[2]), false); $('.case-explorer').scrollIntoView({behavior:'instant', block:'start'}); }
-    else { const card = projects.includes(location.hash.slice(1)) && document.getElementById(location.hash.slice(1)); if (card) $('details', card).open = true; }
-  }
-  $$('[data-project]').forEach(b => b.addEventListener('click', () => setCase(b.dataset.project, 0)));
-  $$('[data-step]').forEach(b => b.addEventListener('click', () => setCase(project, Number(b.dataset.step))));
-  $('#case-next').addEventListener('click', () => step < 2 ? setCase(project, step + 1) : setCase(projects[(projects.indexOf(project) + 1) % projects.length], 0));
-  $$('.case-link').forEach(link => link.addEventListener('click', event => { event.preventDefault(); setCase(link.closest('.card').id, 0); $('.case-explorer').scrollIntoView({behavior:'instant', block:'start'}); $('#case-heading').focus({preventScroll:true}); }));
-  addEventListener('hashchange', fromHash); fromHash();
-  async function copy(value, status, success) {
-    status.parentElement.querySelector('.copy-fallback')?.remove();
-    try { await navigator.clipboard.writeText(value); status.textContent = success; }
-    catch (_) {
-      status.textContent = text('已选中内容，请手动复制。', 'Text selected. Please copy manually.');
-      const field = document.createElement('input');
-      field.className = 'copy-fallback'; field.readOnly = true; field.value = value;
-      field.setAttribute('aria-label', text('待复制内容', 'Text to copy'));
-      status.after(field); field.focus(); field.select();
+  function setupTheme() {
+    const preference = matchMedia('(prefers-color-scheme: dark)');
+    let choice = stored('site-theme');
+    function apply() {
+      root.dataset.theme = choice === 'dark' || choice === 'light' ? choice : preference.matches ? 'dark' : 'light';
+      updateThemeLabel();
     }
+    apply();
+    const button = $('.theme-toggle');
+    if (button) {
+      button.addEventListener('click', () => {
+        choice = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        save('site-theme', choice);
+        apply();
+      });
+      button.hidden = false;
+    }
+    preference.addEventListener?.('change', () => { if (choice !== 'dark' && choice !== 'light') apply(); });
   }
-  $('#share-case').addEventListener('click', () => {
-    const url = new URL(location.href); url.hash = 'case-' + project + '-' + step; url.searchParams.set('lang', language);
-    copy(url.href, $('#share-status'), text('案例链接已复制。', 'Case link copied.'));
+  function setupNavigation() {
+    const nav = $('#site-nav');
+    const button = $('.nav-toggle');
+    if (!nav || !button) return;
+    const mobile = matchMedia('(max-width:640px)');
+    const controls = button.closest('.header-controls');
+    function placeNavigation() {
+      if (!controls || controls.parentElement !== nav.parentElement) return;
+      // Keep the source order aligned with the visible disclosure on mobile:
+      // toggle, navigation links, then page content. Desktop keeps its own order.
+      if (mobile.matches) controls.after(nav);
+      else controls.before(nav);
+    }
+    function setOpen(open) {
+      button.setAttribute('aria-expanded', String(open && mobile.matches));
+      nav.hidden = mobile.matches && !open;
+      updateNavigationLabel();
+    }
+    closeMenu = () => setOpen(false);
+    button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        closeMenu();
+        button.focus();
+      }
+    });
+    document.addEventListener('click', event => {
+      if (button.getAttribute('aria-expanded') === 'true' && !nav.contains(event.target) && !button.contains(event.target)) closeMenu();
+    });
+    mobile.addEventListener?.('change', () => {
+      const previousFocus = document.activeElement;
+      const focusWasInMenu = nav.contains(previousFocus);
+      placeNavigation();
+      closeMenu();
+      if (mobile.matches && focusWasInMenu) button.focus();
+      else if (focusWasInMenu) previousFocus.focus({ preventScroll: true });
+    });
+    placeNavigation();
+    button.hidden = false;
+    closeMenu();
+  }
+  function readRoute(hash = location.hash) {
+    let fragment;
+    try { fragment = decodeURIComponent(hash.replace(/^#/, '')); } catch (_) { return null; }
+    const project = fragment.match(/^(?:project-)?(research|knowledge|collaboration|xuanshu)$/);
+    if (project) return { id: project[1], project: project[1] };
+    const part = fragment.match(/^(?:case-(research|knowledge|collaboration|xuanshu)-([012])|(research|knowledge|collaboration|xuanshu)-part-([012]))$/);
+    if (part) {
+      const name = part[1] || part[3];
+      return { id: name + '-part-' + (part[2] || part[4]), project: name };
+    }
+    return fragment ? { id: fragment } : null;
+  }
+  function routeTarget(hash = location.hash) {
+    const route = readRoute(hash);
+    if (!route) return null;
+    if (route.project && projectIds.has(route.project)) {
+      const details = document.getElementById(route.project);
+      if (details?.tagName === 'DETAILS') details.open = true;
+    }
+    const element = document.getElementById(route.id);
+    if (!element) return null;
+    let parent = element.parentElement;
+    while (parent) {
+      if (parent.tagName === 'DETAILS') parent.open = true;
+      parent = parent.parentElement;
+    }
+    return element;
+  }
+  function focusTarget(element) {
+    const focusable = element.tagName === 'DETAILS' ? $('summary', element) : element;
+    if (!focusable) return;
+    if (!focusable.hasAttribute('tabindex') && focusable.tagName !== 'SUMMARY') focusable.setAttribute('tabindex', '-1');
+    focusable.focus({ preventScroll: true });
+  }
+  function restoreLocation() {
+    if (languageReady) {
+      const requested = new URL(location.href).searchParams.get('lang');
+      const next = requested === 'zh' || requested === 'en' ? requested : state().siteLanguage;
+      if ((next === 'zh' || next === 'en') && next !== language) applyLanguage(next);
+    }
+    const target = routeTarget();
+    if (target && readRoute()?.project) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
+    rememberLanguage();
+  }
+  function setupRouting() {
+    document.addEventListener('click', event => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = event.target.closest('a[href^="#"]');
+      if (!anchor) return;
+      const target = routeTarget(anchor.hash);
+      if (!target) return;
+      rememberLanguage();
+      closeMenu();
+      focusTarget(target);
+      // Opening a native details element before the browser follows the hash
+      // keeps both ordinary anchors and historical project links usable.
+      if (anchor.hash === location.hash && readRoute(anchor.hash)?.project) {
+        requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
+      }
+    });
+    addEventListener('hashchange', restoreLocation);
+    addEventListener('popstate', restoreLocation);
+    restoreLocation();
+  }
+  function setupCopy() {
+    const status = $('.copy-status');
+    if (!status) return;
+    $$('.copy[data-email]').forEach(button => {
+      button.addEventListener('click', async () => {
+        resetCopy();
+        try {
+          await navigator.clipboard.writeText(button.dataset.email);
+          status.textContent = text('邮箱已复制。', 'Email copied.');
+        } catch (_) {
+          status.textContent = text('已选中邮箱，请手动复制。', 'Email selected. Please copy it manually.');
+          const field = document.createElement('input');
+          field.className = 'copy-fallback';
+          field.readOnly = true;
+          field.value = button.dataset.email;
+          field.setAttribute('aria-label', text('待复制邮箱', 'Email address to copy'));
+          status.after(field);
+          field.focus();
+          field.select();
+        }
+      });
+      button.hidden = false;
+    });
+  }
+  function enhance(setup, fallback) {
+    try { setup(); } catch (_) { fallback?.(); }
+  }
+  enhance(setupLanguage, () => {
+    languageReady = false;
+    root.lang = 'zh-CN';
+    const button = $('.language-toggle');
+    if (button) button.hidden = true;
   });
-  $('.copy').addEventListener('click', () => copy($('.copy').dataset.email, $('.copy-status'), text('邮箱已复制。', 'Email copied.')));
-  if ('IntersectionObserver' in window) {
-    const sections = $$('main > section');
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (entry.isIntersecting) { $$('nav a').forEach(a => a.getAttribute('href') === '#' + entry.target.id ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current')); }
-    }), {rootMargin:'-15% 0px -65% 0px'});
-    sections.forEach(section => observer.observe(section));
-  }
+  enhance(setupTheme, () => { const button = $('.theme-toggle'); if (button) button.hidden = true; });
+  enhance(setupNavigation, () => {
+    const nav = $('#site-nav'), button = $('.nav-toggle');
+    if (nav) nav.hidden = false;
+    if (button) button.hidden = true;
+    closeMenu = () => {};
+  });
+  enhance(setupRouting);
+  enhance(setupCopy);
 })();
