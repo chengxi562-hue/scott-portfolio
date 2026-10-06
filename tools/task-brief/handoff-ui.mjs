@@ -25,6 +25,7 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
   let mutation = 0;
   const stageViews = new Map();
   let checkViews = [];
+  const pendingInputs = new Map();
   const status = $('#handoffStatus');
   const content = $('#handoffContent');
   const stagesContainer = $('#handoffStages');
@@ -35,6 +36,11 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
   const markdownButton = $('#exportHandoff');
 
   function announce(message) { status.textContent = message + (storageIssue ? ' ' + storageIssue : ''); }
+  function exportNotice() {
+    if (syncError) return '当前表单尚未同步，本次仅导出原交接任务和记录，当前表单修改不在其中。';
+    if (pendingInputs.size) return '本次仅导出已保存的原记录，编辑框中的未保存修改不在其中。';
+    return '';
+  }
   function persist() {
     try {
       sessionStorage.setItem(STORAGE_KEY, serializeHandoff(record));
@@ -45,6 +51,8 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
     $('#handoffSaveState').textContent = storageIssue || '仅保留在本标签页。关闭前下载交接记录，下次可完整恢复。';
   }
   function accept(next, message = '') {
+    // Validate the recoverable format before replacing the current workspace.
+    serializeHandoff(next);
     record = next;
     mutation += 1;
     persist();
@@ -52,10 +60,19 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
     if (message) announce(message);
     else if (storageIssue) announce('');
   }
-  function perform(action, message) {
+  function perform(action, message, attempted = []) {
     if (syncError) { announce(syncError); return; }
-    try { accept(action(), message); }
-    catch (error) { announce(error.message); }
+    try {
+      const next = action();
+      serializeHandoff(next);
+      attempted.forEach(input => pendingInputs.delete(input.id));
+      accept(next, message);
+    } catch (error) {
+      attempted.forEach(input => pendingInputs.set(input.id, input.value));
+      if (attempted.length) mutation += 1;
+      render();
+      announce('本次修改未保存，原记录保持不变；' + (attempted.length ? '尝试输入仍留在编辑框，请缩短后重试或复制留存：' : '请缩短现有材料后重试：') + error.message);
+    }
   }
   function guardPaste(textarea, limit, label) {
     textarea.addEventListener('paste', event => {
@@ -112,7 +129,7 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
     save.dataset.saveStage = id;
     const blocked = node('p', '', 'handoff-stage-help');
     const view = { article, heading, state, details, prompt, copy, output, save, blocked };
-    output.addEventListener('input', () => perform(() => updateStageOutput(record, id, output.value)));
+    output.addEventListener('input', () => perform(() => updateStageOutput(record, id, output.value), '', [output]));
     save.addEventListener('click', () => perform(() => confirmStageOutput(record, id), '已保存本步产物。保存表示它对应当前任务，不代表验收通过。'));
     copy.addEventListener('click', () => copyPrompt(view));
     article.append(heading, state, copy, details, label, save, blocked);
@@ -140,7 +157,7 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
     const save = node('button', '保存人工判断');
     save.type = 'button';
     save.dataset.saveCheck = index;
-    const change = () => perform(() => updateCheck(record, index, select.value, note.value));
+    const change = () => perform(() => updateCheck(record, index, select.value, note.value), '', [select, note]);
     select.addEventListener('change', change);
     note.addEventListener('input', change);
     save.addEventListener('click', () => perform(() => confirmCheck(record, index), '人工判断已保存；未核验项保持未核验。'));
@@ -149,27 +166,31 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
   }
   function render() {
     content.hidden = !record;
-    jsonButton.disabled = !record || !!syncError;
-    markdownButton.disabled = !record || !!syncError;
+    jsonButton.disabled = !record;
+    markdownButton.disabled = !record;
     start.textContent = record ? '重新开始一份交接' : '开始手动交接';
     if (!record) return;
+    const hasPending = pendingInputs.size > 0;
     const ids = activeStages(record);
     if ([...stageViews.keys()].join(',') !== ids.join(',')) {
       stageViews.clear(); stagesContainer.replaceChildren();
       ids.forEach((id, index) => { const view = stageView(id, index); stageViews.set(id, view); stagesContainer.append(view.article); });
     }
     for (const [id, view] of stageViews) {
-      const blocked = syncError || promptAvailability(record, id);
-      const state = stageStatus(record, id);
-      view.state.textContent = stageLabels[state];
+      const blocked = syncError || (hasPending ? '存在未保存的输入修改，请先缩短并重新编辑，保存成功后再继续。' : promptAvailability(record, id));
+      const savedState = stageStatus(record, id);
+      const state = (syncError || hasPending) && savedState === 'current' ? 'stale' : savedState;
+      const pending = pendingInputs.has(view.output.id);
+      view.state.textContent = stageLabels[state] + (pending ? '；编辑框中的本次输入未保存。' : '');
       view.article.dataset.state = state;
       view.prompt.value = blocked ? '' : buildStagePrompt(record, id);
       view.prompt.placeholder = blocked;
       view.copy.disabled = Boolean(blocked);
-      view.save.disabled = Boolean(blocked) || !record.stages[id].output.trim();
+      view.save.disabled = Boolean(blocked) || !record.stages[id].output.trim() || pending;
       view.output.readOnly = Boolean(syncError);
       view.blocked.textContent = blocked || '保存前请核对：这是按当前任务和上游材料得到的产物。每步最多 20,000 字符。';
-      if (view.output.value !== record.stages[id].output) view.output.value = record.stages[id].output;
+      const shownOutput = pending ? pendingInputs.get(view.output.id) : record.stages[id].output;
+      if (view.output.value !== shownOutput) view.output.value = shownOutput;
     }
     if (JSON.stringify(checkViews.map(view => view.criterion.textContent)) !== JSON.stringify(record.checks.map(check => check.criterion))) {
       checkViews = record.checks.map(checkView);
@@ -177,14 +198,19 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
     }
     record.checks.forEach((check, index) => {
       const view = checkViews[index];
-      view.state.textContent = checkLabels[checkStatus(record, index)];
-      if (view.select.value !== check.status) view.select.value = check.status;
-      if (view.note.value !== check.note) view.note.value = check.note;
+      const pending = pendingInputs.has(view.select.id) || pendingInputs.has(view.note.id);
+      const savedState = checkStatus(record, index);
+      const state = (syncError || hasPending) && savedState !== 'unverified' ? 'stale' : savedState;
+      view.state.textContent = checkLabels[state] + (pending ? '；编辑框中的本次输入未保存。' : '');
+      const shownStatus = pendingInputs.has(view.select.id) ? pendingInputs.get(view.select.id) : check.status;
+      const shownNote = pendingInputs.has(view.note.id) ? pendingInputs.get(view.note.id) : check.note;
+      if (view.select.value !== shownStatus) view.select.value = shownStatus;
+      if (view.note.value !== shownNote) view.note.value = shownNote;
       view.select.disabled = Boolean(syncError);
       view.note.readOnly = Boolean(syncError);
-      view.save.disabled = !!syncError || !outputsReady(record);
+      view.save.disabled = !!syncError || hasPending || !outputsReady(record);
     });
-    $('#handoffSummary').textContent = syncError || handoffSummary(record);
+    $('#handoffSummary').textContent = syncError || (hasPending ? '存在未保存的输入修改，当前编辑的交接与验收尚未完成；原记录仍保留。' : handoffSummary(record));
     $('#handoffUnknowns').textContent = record.brief.unknowns ? '任务中仍保留的未知项：' + record.brief.unknowns : '没有填写未知项，不代表不存在未知；验收时请继续保留无法确认的内容。';
     const preserved = $('#handoffPreserved');
     const preservedBody = $('#handoffPreservedBody');
@@ -208,24 +234,25 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
       const next = createHandoff(readBrief());
       if (record && !await confirmAction('重新开始会替换当前交接产物与人工判断。需要保留时请取消，先下载交接记录。确定重新开始吗？')) return;
       syncError = ''; backupSnapshot = '';
+      pendingInputs.clear();
       accept(next, '手动交接已建立。先复制第一步任务，交给你自己使用的 AI。');
       stageViews.values().next().value.copy.focus({ preventScroll: true });
     } catch (error) { announce(error.message); }
   });
   jsonButton.addEventListener('click', () => {
-    if (!record || syncError) return;
+    if (!record) return;
     try {
       const text = serializeHandoff(record);
       downloadFile(text, 'task-brief-handoff.json', 'application/json;charset=utf-8');
       backupSnapshot = text;
-      announce('已请求下载交接记录，请确认保存成功。文件包含原任务、实际产物与人工判断，可在此完整恢复。');
+      announce(exportNotice() + '已请求下载交接记录，请确认保存成功。文件包含原任务、实际产物与人工判断，可在此完整恢复。');
     } catch (error) { announce(error.message); }
   });
   markdownButton.addEventListener('click', () => {
-    if (!record || syncError) return;
+    if (!record) return;
     try {
       downloadFile(exportHandoffMarkdown(record), 'task-brief-handoff.md', 'text/markdown;charset=utf-8');
-      announce('已请求下载完整 Markdown。未核验、过期产物和旧判断会如实保留；恢复填写请另存交接 JSON。');
+      announce(exportNotice() + '已请求下载完整 Markdown。未核验、过期产物和旧判断会如实保留；恢复填写请另存交接 JSON。');
     } catch (error) { announce(error.message); }
   });
   importInput.addEventListener('change', async () => {
@@ -247,6 +274,7 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
       record = next; syncError = '';
       applyBrief(next.brief);
       backupSnapshot = preparedSnapshot;
+      pendingInputs.clear();
       accept(next, '交接记录已恢复。产物和通过标记来自文件中的使用者记录，工具未验证其真实性。');
     } catch (error) { announce('未导入：' + error.message); }
     finally { importInput.value = ''; importInput.disabled = false; }
@@ -256,15 +284,24 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
     const hasWork = Object.values(record.stages).some(stage => stage.output.trim()) || record.checks.some(check => check.note || check.status !== 'unverified');
     let current = '';
     try { current = serializeHandoff(record); } catch (_) {}
-    if (hasWork && (!current || current !== backupSnapshot)) { event.preventDefault(); event.returnValue = ''; }
+    if ((hasWork || pendingInputs.size || syncError) && (!current || current !== backupSnapshot || pendingInputs.size || syncError)) { event.preventDefault(); event.returnValue = ''; }
   });
   try {
     const stored = sessionStorage.getItem(STORAGE_KEY);
     if (stored) {
       record = parseHandoff(stored);
-      if (hasRestoredBrief) record = updateHandoffBrief(record, readBrief());
+      if (hasRestoredBrief) {
+        try {
+          const next = updateHandoffBrief(record, readBrief());
+          serializeHandoff(next);
+          record = next;
+        } catch (error) {
+          syncError = error.message;
+          announce('已保留原交接缓存；当前任务信息未同步，旧记录不得用于当前任务：' + error.message);
+        }
+      }
       else applyBrief(record.brief);
-      announce('已恢复本标签页交接记录。关闭前请下载 JSON 留存。');
+      if (!syncError) announce('已恢复本标签页交接记录。关闭前请下载 JSON 留存。');
     }
   } catch (_) { storageIssue = '交接缓存无法读取或存储不可用，尚未覆盖旧缓存；可导入已下载的交接记录。'; announce(''); }
   $('#handoffSaveState').textContent = storageIssue || '仅保留在本标签页。关闭前下载交接记录，下次可完整恢复。';
@@ -272,6 +309,20 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
   return {
     sync(nextBrief) {
       if (!record) return;
+      if (pendingInputs.size) {
+        try {
+          const next = updateHandoffBrief(record, nextBrief);
+          if (next.briefRevision === record.briefRevision) {
+            syncError = '';
+            render();
+            return;
+          }
+        } catch (_) { /* Preserve pending inputs and their original task. */ }
+        syncError = '存在未保存的产物或验收输入，任务信息尚未替换；请撤回任务信息变更，再处理编辑框中未保存的输入。';
+        render();
+        announce(syncError);
+        return;
+      }
       try {
         const next = updateHandoffBrief(record, nextBrief);
         const changed = next.briefRevision !== record.briefRevision;
@@ -279,7 +330,15 @@ export function setupHandoff({ readBrief, applyBrief, confirmAction, isConfirmOp
         if (changed) accept(next, '任务信息已变更。原产物和人工判断仍保留，请按当前任务重新核对并保存。');
         else render();
       } catch (error) {
-        if (!syncError) { record = invalidateHandoff(record); mutation += 1; persist(); }
+        if (!syncError) {
+          try {
+            const invalidated = invalidateHandoff(record);
+            serializeHandoff(invalidated);
+            record = invalidated;
+            mutation += 1;
+            persist();
+          } catch (_) { /* Keep the previous recoverable record and its cache. */ }
+        }
         syncError = error.message;
         render();
         announce('当前任务信息尚未同步到交接记录，旧产物已标记失效：' + error.message);
