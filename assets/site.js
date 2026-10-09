@@ -135,7 +135,13 @@
     }
     closeMenu = () => setOpen(false);
     button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
-    nav.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+    nav.addEventListener('click', event => {
+      const anchor = event.target.closest('a');
+      if (!anchor) return;
+      const returnFocus = mobile.matches && anchor.hasAttribute('download') && button.getAttribute('aria-expanded') === 'true';
+      closeMenu();
+      if (returnFocus) button.focus({ preventScroll: true });
+    });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
         closeMenu();
@@ -160,6 +166,8 @@
   function readRoute(hash = location.hash) {
     let fragment;
     try { fragment = decodeURIComponent(hash.replace(/^#/, '')); } catch (_) { return null; }
+    if (fragment === 'tools' || fragment === 'tool-start') return { id: 'work' };
+    if (fragment === 'approach') return { id: 'practice' };
     const project = fragment.match(/^(?:project-)?(research|knowledge|collaboration|xuanshu)$/);
     if (project) return { id: project[1], project: project[1] };
     const part = fragment.match(/^(?:case-(research|knowledge|collaboration|xuanshu)-([012])|(research|knowledge|collaboration|xuanshu)-part-([012]))$/);
@@ -185,20 +193,35 @@
     }
     return element;
   }
+  function isMappedRoute(target, hash = location.hash) {
+    let fragment;
+    try { fragment = decodeURIComponent(hash.replace(/^#/, '')); } catch (_) { return false; }
+    return target.id !== fragment;
+  }
   function focusTarget(element) {
     const focusable = element.tagName === 'DETAILS' ? $('summary', element) : element;
     if (!focusable) return;
     if (!focusable.hasAttribute('tabindex') && focusable.tagName !== 'SUMMARY') focusable.setAttribute('tabindex', '-1');
     focusable.focus({ preventScroll: true });
   }
+  let locationFrame = null;
   function restoreLocation() {
     if (languageReady) {
       const requested = new URL(location.href).searchParams.get('lang');
       const next = requested === 'zh' || requested === 'en' ? requested : state().siteLanguage;
       if ((next === 'zh' || next === 'en') && next !== language) applyLanguage(next);
     }
+    if (locationFrame !== null) {
+      cancelAnimationFrame(locationFrame);
+      locationFrame = null;
+    }
     const target = routeTarget();
-    if (target && readRoute()?.project) requestAnimationFrame(() => target.scrollIntoView({ behavior: 'instant', block: 'start' }));
+    if (target && (readRoute()?.project || isMappedRoute(target))) {
+      locationFrame = requestAnimationFrame(() => {
+        locationFrame = null;
+        target.scrollIntoView({ behavior: 'instant', block: 'start' });
+      });
+    }
     rememberLanguage();
   }
   function setupRouting() {
@@ -210,6 +233,17 @@
       if (!target) return;
       rememberLanguage();
       closeMenu();
+      if (isMappedRoute(target, anchor.hash)) {
+        if (anchor.hash !== location.hash) {
+          const url = new URL(location.href);
+          url.hash = anchor.hash;
+          try { history.pushState({ ...state(), siteLanguage: language }, '', url); } catch (_) { return; }
+        }
+        event.preventDefault();
+        focusTarget(target);
+        target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+        return;
+      }
       focusTarget(target);
       // Opening a native details element before the browser follows the hash
       // keeps both ordinary anchors and historical project links usable.
@@ -219,7 +253,20 @@
     });
     addEventListener('hashchange', restoreLocation);
     addEventListener('popstate', restoreLocation);
+    const startupHash = location.hash;
     restoreLocation();
+    // Web-font reflow can move a saved deep link after its first restoration.
+    // Correct it once after fonts settle, unless the visitor has taken control.
+    if (startupHash && document.fonts?.ready) {
+      let pending = true;
+      const cancel = () => { pending = false; };
+      const inputEvents = ['pointerdown', 'wheel', 'keydown'];
+      inputEvents.forEach(event => addEventListener(event, cancel, { passive: true }));
+      document.fonts.ready.then(() => {
+        inputEvents.forEach(event => removeEventListener(event, cancel));
+        if (pending && location.hash === startupHash) restoreLocation();
+      });
+    }
   }
   function setupCopy() {
     const status = $('.copy-status');
