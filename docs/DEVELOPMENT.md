@@ -5,9 +5,8 @@
 - `index.html`、`assets/site.css`、`assets/site.js`、`assets/languages.js`：首页与双语交互。
 - `assets/interior.css`：子页公共字体、主题与阅读布局。
 - `tools/evidence-brief/`、`tools/task-brief/`：公开工具，核心规则与页面交互分离。
-- `projects/tongzhou/`、`projects/xuanshu/`：静态案例，不包含本地执行器或研究引擎。
+- `projects/tongzhou/`：静态案例，不包含本地执行器或研究引擎。
 - `assets/fonts/`：本地字体及许可；中文标题子集覆盖说明见 `ChengxiEditorial-SOURCE.md`，新增文字时检查覆盖。
-- `vision/`：个人练习页，保留 `noindex`，不放在站内导航或 sitemap。
 - `_dev/`、`.playwright-cli/`：本地候选、备份、回执及测试输出，被 Git 忽略，不随网站发布。
 
 原始照片、私人档案、源视频库、会员凭证、任务队列与控制接口不进入此仓库。
