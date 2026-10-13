@@ -4,7 +4,7 @@
   const root = document.documentElement;
   const $ = (selector, context = document) => context.querySelector(selector);
   const $$ = (selector, context = document) => [...context.querySelectorAll(selector)];
-  const projectIds = new Set(['research', 'knowledge', 'collaboration', 'xuanshu']);
+  const projectIds = new Set(['research', 'knowledge', 'collaboration']);
   let language = 'zh';
   let languageReady = false;
   let closeMenu = () => {};
@@ -168,9 +168,10 @@
     try { fragment = decodeURIComponent(hash.replace(/^#/, '')); } catch (_) { return null; }
     if (fragment === 'tools' || fragment === 'tool-start') return { id: 'work' };
     if (fragment === 'approach') return { id: 'practice' };
-    const project = fragment.match(/^(?:project-)?(research|knowledge|collaboration|xuanshu)$/);
+    if (/^(?:(?:project-)?xuanshu|case-xuanshu-[012]|xuanshu-part-[012])$/.test(fragment)) return { id: 'practice' };
+    const project = fragment.match(/^(?:project-)?(research|knowledge|collaboration)$/);
     if (project) return { id: project[1], project: project[1] };
-    const part = fragment.match(/^(?:case-(research|knowledge|collaboration|xuanshu)-([012])|(research|knowledge|collaboration|xuanshu)-part-([012]))$/);
+    const part = fragment.match(/^(?:case-(research|knowledge|collaboration)-([012])|(research|knowledge|collaboration)-part-([012]))$/);
     if (part) {
       const name = part[1] || part[3];
       return { id: name + '-part-' + (part[2] || part[4]), project: name };
