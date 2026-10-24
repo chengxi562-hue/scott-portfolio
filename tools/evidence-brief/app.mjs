@@ -2,6 +2,7 @@ import {validateWorkspace,auditClaim,quoteMatch,safeUrl,exportMarkdown,buildHand
 const $ = s => document.querySelector(s);
 const today = () => new Date().toISOString().slice(0,10);
 const KEY = 'evidence-brief-v1';
+const IMPORT_FILE_BYTES = 16_777_216;
 const empty = () => ({version:1,title:'',scenario:'marketing',claims:[]});
 let state=empty(),selected=null,editing=null,dirty=false,claimDirty=false,history=[];
 const uid = () => crypto.randomUUID();
@@ -70,7 +71,7 @@ function sample(){return {version:1,title:'示例：一个 AI 商业研究工具
 $('#sample').addEventListener('click',async()=>{if(!(await abandonDraft()))return;if(state.claims.length&&!await ask('示例会替换当前工作区。原内容可在本次会话中撤销；重要内容请先备份。继续？'))return;const next=sample();selected=next.claims[0].id;closeSource();commit(next,'已打开公开来源示例：第一条有来源，第二条只有背景，第三条仍是假设。示例复核日期为 2026-09-19，不代表之后仍自动有效。');});
 async function download(name,data,type){if(hasPendingInput()&&!await ask('当前有未保存的编辑。下载只包含上次保存的内容，是否继续？'))return false;const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);return true;}
 $('#backup').addEventListener('click',async()=>{if(!await download('evidence-brief-'+today()+'.json',JSON.stringify(state,null,2),'application/json'))return;notify('已请求下载 JSON 备份；请确认浏览器下载完成。备份包含你粘贴的原文。');});
-$('#import').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;try{if(file.size>2_000_000)throw Error('文件超过 2 MB，未导入。');const next=validateWorkspace(JSON.parse(await file.text()));if(!(await abandonDraft()))return;if(state.claims.length&&!await ask('导入会替换当前工作区，可在本次会话中撤销。继续？'))return;selected=next.claims[0]?.id||null;closeSource();commit(next,'导入成功。来源性质与复核标记来自文件内容，并非平台认证。');}catch(error){notify('导入失败，原内容保留：'+error.message);}});
+$('#import').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;try{if(file.size>IMPORT_FILE_BYTES)throw Error('文件超过 16 MiB（16,777,216 字节），未导入。');const next=validateWorkspace(JSON.parse(await file.text()));if(!(await abandonDraft()))return;if(state.claims.length&&!await ask('导入会替换当前工作区，可在本次会话中撤销。继续？'))return;selected=next.claims[0]?.id||null;closeSource();commit(next,'导入成功。来源性质与复核标记来自文件内容，并非平台认证。');}catch(error){notify('导入失败，原内容保留：'+error.message);}});
 let opener=null;
 async function output(title,text,note){if(hasPendingInput()&&!await ask('当前有未保存的编辑。生成内容只使用上次保存的记录，是否继续？'))return;opener=document.activeElement;$('#output-title').textContent=title;$('#output-text').value=text;$('#output-note').textContent=note;$('#copy-state').textContent='';$('#output-dialog').showModal();}
 $('#preview').addEventListener('click',async()=>output('简报预览',exportMarkdown(state,today()),'包括所有说法、来源与缺口；不会因为记录完整就宣称事实已被证实。'));
