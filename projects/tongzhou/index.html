@@ -144,6 +144,39 @@
         </tbody>
       </table>
     </div>
+    <div class="table-wrap">
+      <table class="record-table">
+        <caption>2026-10-29 增补记录：统一调度队列与工作台（工程检查，非实时数据）</caption>
+        <thead>
+          <tr>
+            <th scope="col">日期</th>
+            <th scope="col">项目</th>
+            <th scope="col">结果</th>
+            <th scope="col">说明与限制</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026-10-29</td>
+            <td>全量回归</td>
+            <td>538 项通过</td>
+            <td>本地调度器全量测试（Python 3.12，0 跳过）。此前 6 项失败来自测试运行目录、缺少依赖与过时断言，均已逐项定位修正。</td>
+          </tr>
+          <tr>
+            <td>2026-10-29</td>
+            <td>调度质量修复</td>
+            <td>已上线，保留旧版回滚</td>
+            <td>发现失败率分母误计入已取消、排队中的任务，可能让零成功的路线被优先；修正后新增 3 项回归测试，并用当时队列中的 61 条真实任务重放核对排序。</td>
+          </tr>
+          <tr>
+            <td>2026-10-29</td>
+            <td>工作台 v2</td>
+            <td>压测 200/200 成功</td>
+            <td>把 4 个现有数据源聚合为一份摘要接口，加 10 秒缓存；20 并发、200 次请求 p95 约 42 ms（旧版同条件仅 26/200 成功）。工作台为本地私用，不公开。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <p class="section-note">本页为静态记录，不是实时仪表盘；数据不会随时间自动更新。</p>
   </section>
 
@@ -232,7 +265,7 @@
 
 <footer class="site-footer">
   <p><a href="../../">返回首页</a></p>
-  <p class="footer-date">记录日期：2026-09-20</p>
+  <p class="footer-date">记录日期：2026-09-20 · 增补：2026-10-29</p>
 </footer>
 
 <script src="case.js"></script>

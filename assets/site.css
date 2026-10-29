@@ -126,3 +126,5 @@ button{color:inherit}
 @media (prefers-reduced-motion: reduce){.resume-button:active,.quiet-link:active,.email:active,.work-preview-link:active,.work-title-link:active,.masthead nav a:active,summary:active,.copy:active,.theme-toggle:active,.language-toggle:active{transform:none;opacity:1}}
 
 .work-preview-link picture{display:block}
+
+.exp-group{margin:34px 0 0;font-size:11px;letter-spacing:.08em;color:var(--muted)}.exp-group+.timeline{margin-top:14px}.education+.education{margin-top:16px}.timeline+.education,.exp-group+.education{margin-top:14px}.contact-availability{margin-top:12px;max-width:30em;font-size:13px;line-height:1.85;color:var(--muted)}
