@@ -159,7 +159,7 @@ window.SITE_TRANSLATIONS = {
     "fData": "Excel 问卷数据处理与统计分析、见数（Credamo）；能设计指标体系与自动化校验规则。",
     "fAiLabel": "AI 辅助工作",
     "fAi": "需求拆解、流程设计与结果复核，重视信息来源和输出边界。",
-    "fAvailability": "正在寻找市场营销 / AI 应用 / 商业分析方向的实习：深圳、广州，可异地；每周 5 天，可实习 3–6 个月。"
+    "fAvailability": "正在寻找市场营销 / AI 应用 / 商业分析方向的实习：深圳、广州，可异地。"
   },
   "en": {
     "t0": "Skip to main content",
@@ -297,7 +297,7 @@ window.SITE_TRANSLATIONS = {
     "fFooter": "Yi Chengxi · 2026",
     "fBackTop": "Back to the top",
     "fPaperLabel": "Publication",
-    "fPaper": "“The Application of InsurTech in Auto-Insurance Risk Control” (Chinese-language paper) accepted by the journal Finance & Economics — sole author, June 2026.",
+    "fPaper": "“The Application of InsurTech in Auto-Insurance Risk Control” (translated title; Chinese-language paper) accepted by the journal Finance & Economics — sole author, June 2026.",
     "fThesisLabel": "Graduation thesis · proposal stage",
     "fThesis": "How the way a personal AI assistant discloses the personal information it uses affects willingness to use it, with perceived transparency as the mediator — a scenario experiment, in progress.",
     "fHonorsLabel": "Honours",
@@ -321,6 +321,6 @@ window.SITE_TRANSLATIONS = {
     "fData": "Excel for survey data and statistics, Credamo; designing metric systems and automated validation rules.",
     "fAiLabel": "Working with AI",
     "fAi": "Breaking down requirements, designing workflows and reviewing outputs, with attention to sources and limits.",
-    "fAvailability": "Looking for internships in marketing, applied AI or business analysis — Shenzhen or Guangzhou, open to relocation; five days a week for 3–6 months."
+    "fAvailability": "Looking for internships in marketing, applied AI or business analysis — Shenzhen or Guangzhou, open to relocation."
   }
 };
