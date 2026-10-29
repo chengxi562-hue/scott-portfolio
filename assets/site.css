@@ -124,3 +124,5 @@ button{color:inherit}
 @media(max-width:760px){.hello-en{margin-top:10px}.work-english{font-size:56px}.task .work-english{font-size:50px}}
 @media(max-width:540px){.hello-en{margin-top:10px}.work-english{font-size:48px}.task .work-english{font-size:44px}.interests{gap:14px 28px}.section-note h2,.work-heading h2,.life-heading h2{font-size:14px;font-weight:500}}
 @media (prefers-reduced-motion: reduce){.resume-button:active,.quiet-link:active,.email:active,.work-preview-link:active,.work-title-link:active,.masthead nav a:active,summary:active,.copy:active,.theme-toggle:active,.language-toggle:active{transform:none;opacity:1}}
+
+.work-preview-link picture{display:block}
